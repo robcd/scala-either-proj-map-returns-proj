@@ -6,8 +6,7 @@
 **                          |/                                          **
 \*                                                                      */
 
-
-
+import scala.{Either => _, Left => _, Right => _}
 
 /** Represents a value of one of two possible types (a disjoint union.)
  *  Instances of Either are either an instance of [[scala.Left]] or [[scala.Right]].
