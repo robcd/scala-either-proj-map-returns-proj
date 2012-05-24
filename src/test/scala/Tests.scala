@@ -12,9 +12,8 @@ class Tests extends FunSuite with ShouldMatchers {
     for {
       a <- either.right
       b = a + intVal2
-    } println(b)
-    //} res = b
-    //res should equal(intVal + intVal2)
+    } res = b
+    res should equal(intVal + intVal2)
   }
 
   test("map") {

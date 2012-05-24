@@ -368,9 +368,9 @@ object Either {
      * Right[Int, Int](12).left.map(_ + 2) // Right(12)
      * }}}
      */
-    def map[X](f: A => X) = e match {
+    def map[X](f: A => X): LeftProjection[X, B] = e match {
       case Left(a) => LeftProjection(Left(f(a)))
-      case r @ Right(_) => LeftProjection(r)
+      case Right(b) => LeftProjection(Right(b))
     }
 
     /**
@@ -526,8 +526,8 @@ object Either {
      * Left(12).right.map(x => "flower")  // Result: Left(12)
      * }}}
      */
-    def map[Y](f: B => Y) = e match {
-      case l @ Left(a) => RightProjection(l)
+    def map[Y](f: B => Y): RightProjection[A, Y] = e match {
+      case Left(a) => RightProjection(Left(a))
       case Right(b) => RightProjection(Right(f(b)))
     }
 
