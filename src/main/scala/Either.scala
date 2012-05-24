@@ -355,9 +355,9 @@ object Either {
      * }}}
      * @param The function to bind across `Left`.
      */
-    def flatMap[BB >: B, X](f: A => Either[X, BB]) = e match {
+    def flatMap[BB >: B, X](f: A => LeftProjection[X, BB]): LeftProjection[X, BB] = e match {
       case Left(a) => f(a)
-      case Right(b) => Right(b)
+      case Right(b) => LeftProjection(Right(b))
     }
 
     /**
@@ -513,8 +513,8 @@ object Either {
      *
      * @param The function to bind across `Right`.
      */
-    def flatMap[AA >: A, Y](f: B => Either[AA, Y]) = e match {
-      case Left(a) => Left(a)
+    def flatMap[AA >: A, Y](f: B => RightProjection[AA, Y]): RightProjection[AA, Y] = e match {
+      case Left(a) => RightProjection(Left(a))
       case Right(b) => f(b)
     }
 
@@ -575,11 +575,11 @@ object Either {
 
   @deprecated("use `x.joinLeft'", "2.8.0")
   def joinLeft[A, B](es: Either[Either[A, B], B]) =
-    es.left.flatMap(x => x)
+    es.left.flatMap(x => LeftProjection(x))
 
   @deprecated("use `x.joinRight'", "2.8.0")
   def joinRight[A, B](es: Either[A, Either[A, B]]) =
-    es.right.flatMap(x => x)
+    es.right.flatMap(x => RightProjection(x))
 
   /**
    * Takes an `Either` to its contained value within `Left` or
