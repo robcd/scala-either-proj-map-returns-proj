@@ -369,8 +369,8 @@ object Either {
      * }}}
      */
     def map[X](f: A => X) = e match {
-      case Left(a) => Left(f(a))
-      case Right(b) => Right(b)
+      case Left(a) => LeftProjection(Left(f(a)))
+      case r @ Right(_) => LeftProjection(r)
     }
 
     /**
@@ -527,8 +527,8 @@ object Either {
      * }}}
      */
     def map[Y](f: B => Y) = e match {
-      case Left(a) => Left(a)
-      case Right(b) => Right(f(b))
+      case l @ Left(a) => RightProjection(l)
+      case Right(b) => RightProjection(Right(f(b)))
     }
 
     /** Returns `None` if this is a `Left` or if the
