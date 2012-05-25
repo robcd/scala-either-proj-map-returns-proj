@@ -383,8 +383,8 @@ object Either {
      * Right(12).left.filter(_ > 10) // None
      * }}}
      */
-    def filter[Y](p: A => Boolean): Option[Either[A, Y]] = e match {
-      case Left(a) => if(p(a)) Some(Left(a)) else None
+    def filter[Y](p: A => Boolean): Option[LeftProjection[A, Y]] = e match {
+      case Left(a) => if(p(a)) Some(LeftProjection(Left(a))) else None
       case Right(b) => None
     }
 
@@ -541,9 +541,9 @@ object Either {
      * Left(12).right.filter(_ > 10)  // None
      * }}}
      */
-    def filter[X](p: B => Boolean): Option[Either[X, B]] = e match {
+    def filter[X](p: B => Boolean): Option[RightProjection[X, B]] = e match {
       case Left(_) => None
-      case Right(b) => if(p(b)) Some(Right(b)) else None
+      case Right(b) => if(p(b)) Some(RightProjection(Right(b))) else None
     }
 
     /** Returns a `Seq` containing the `Right` value if
