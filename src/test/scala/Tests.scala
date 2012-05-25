@@ -29,6 +29,7 @@ class Tests extends FunSuite with ShouldMatchers {
     for {
       a <- either.right
       b = a + intVal2
+      if b > 0
     } res = b
     res should equal(intVal + intVal2)
   }
@@ -57,8 +58,10 @@ class Tests extends FunSuite with ShouldMatchers {
     for {
       a <- gt0(intVal).right
       b <- gt0(a).right
-    } res = b
-    res should equal(intVal)
+      c = b + intVal2
+      if c > 0
+    } res = c
+    res should equal(intVal + intVal2)
   }
 
   test("two right generators with map") {
