@@ -12,7 +12,14 @@ class Tests extends FunSuite with ShouldMatchers {
     for {
       a <- either.left
       b = a + intVal2
+      if b > 0
     } res = b
+    //      ^
+    // /Users/rob/Devt/Codebase/scala/Either/src/test/scala/Tests.scala:16: type mismatch;
+    // found   : Either[Int,Nothing]
+    // required: Int
+    // (compilation error obtained originally)
+
     res should equal(intVal + intVal2)
   }
 
