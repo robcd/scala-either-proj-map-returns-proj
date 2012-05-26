@@ -127,6 +127,17 @@ class Tests extends FunSuite with ShouldMatchers {
     res should equal(Either.RightProjection(Right(intVal + intVal2)))
   }
 
+  test("two right generators with map true 2") {
+    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+    val res = for {
+      a <- gt0(intVal).right
+      b = a + intVal2
+      if b > 0
+      c <- gt0(b).right
+    } yield c
+    res should equal(Either.RightProjection(Right(intVal + intVal2)))
+  }
+
   test("two right generators with map false") {
     def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
     val res = for {
@@ -134,6 +145,17 @@ class Tests extends FunSuite with ShouldMatchers {
       b <- gt0(a).right
       c = b + intVal2
       if c < 0
+    } yield c
+    res should equal(Either.RightProjection(RightAsLeft(Right(intVal + intVal2))))
+  }
+
+  test("two right generators with map false 2") {
+    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+    val res = for {
+      a <- gt0(intVal).right
+      b = a + intVal2
+      if b < 0
+      c <- gt0(b).right
     } yield c
     res should equal(Either.RightProjection(RightAsLeft(Right(intVal + intVal2))))
   }

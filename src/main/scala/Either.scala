@@ -372,6 +372,10 @@ object Either {
       (e: @unchecked) match {
         case Left(a) => f(a)
         case Right(b) => LeftProjection(Right(b))
+        case LeftAsRight(Left(a)) => (f(a).e: @unchecked) match {
+          case l @ Left(_) => LeftProjection(LeftAsRight(l))
+          case r @ Right(_) => LeftProjection(r)
+        }
       }
 
     /**
@@ -537,6 +541,10 @@ object Either {
     def flatMap[AA >: A, Y](f: B => RightProjection[AA, Y]): RightProjection[AA, Y] =
       (e: @unchecked) match {
         case Left(a) => RightProjection(Left(a))
+        case RightAsLeft(Right(b)) => (f(b).e: @unchecked) match {
+          case l @ Left(_) => RightProjection(l)
+          case r @ Right(_) => RightProjection(RightAsLeft(r))
+        }
         case Right(b) => f(b)
       }
 
