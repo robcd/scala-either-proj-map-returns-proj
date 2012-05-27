@@ -428,6 +428,7 @@ object Either {
     def toSeq = (e: @unchecked) match {
       case Left(a) => Seq(a)
       case Right(_) => Seq.empty
+      case LeftAsRight(_) => Seq.empty
     }
 
     /**
@@ -442,6 +443,7 @@ object Either {
     def toOption = (e: @unchecked) match {
       case Left(a) => Some(a)
       case Right(_) => None
+      case LeftAsRight(_) => None
     }
   }
 
@@ -601,6 +603,7 @@ object Either {
      */
     def toSeq = (e: @unchecked) match {
       case Left(_) => Seq.empty
+      case RightAsLeft(_) => Seq.empty
       case Right(b) => Seq(b)
     }
 
@@ -614,6 +617,7 @@ object Either {
      */
     def toOption = (e: @unchecked) match {
       case Left(_) => None
+      case RightAsLeft(_) => None
       case Right(b) => Some(b)
     }
   }
