@@ -360,6 +360,7 @@ object Either {
     def exists(f: A => Boolean) = (e: @unchecked) match {
       case Left(a) => f(a)
       case Right(_) => false
+      case LeftAsRight(_) => false
     }
 
     /**
@@ -536,6 +537,7 @@ object Either {
      */
     def exists(f: B => Boolean) = (e: @unchecked) match {
       case Left(_) => false
+      case RightAsLeft(_) => false
       case Right(b) => f(b)
     }
 
