@@ -295,6 +295,7 @@ object Either {
     def get = (e: @unchecked) match {
       case Left(a) => a
       case Right(_) =>  throw new NoSuchElementException("Either.left.value on Right")
+      case LeftAsRight(_) =>  throw new NoSuchElementException("Either.left.value on Right")
     }
 
     /**
@@ -472,6 +473,7 @@ object Either {
      */
     def get = (e: @unchecked) match {
       case Left(_) =>  throw new NoSuchElementException("Either.right.value on Left")
+      case RightAsLeft(_) =>  throw new NoSuchElementException("Either.right.value on Left")
       case Right(a) => a
     }
 

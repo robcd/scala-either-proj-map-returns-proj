@@ -72,6 +72,9 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     left.e should equal(LeftAsRight(Left(intVal + intVal2)))
+    intercept[NoSuchElementException] {
+      left.get
+    }
     left.getOrElse(0) should equal(0)
   }
 
@@ -95,6 +98,9 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     right.e should equal(RightAsLeft(Right(intVal + intVal2)))
+    intercept[NoSuchElementException] {
+      right.get
+    }
     right.getOrElse(0) should equal(0)
   }
 
