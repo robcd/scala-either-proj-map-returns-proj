@@ -130,70 +130,121 @@ class Tests extends FunSuite with ShouldMatchers {
     right.toOption should equal(None)
   }
 
-  test("two right generators with foreach true") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+  def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+  def gt1(n: Int): Either[String, Int] = if (n > 1) Right(n) else Left("n must be > 1: "+ n)
+
+  test("two right generators with foreach - succeeds 1") {
+    var res = 0
+    for {
+      a <- gt0(intVal + intVal2).right
+      b <- gt1(a).right
+    } res = b
+    res should equal(intVal + intVal2)
+  }
+
+  test("two right generators with foreach - succeeds 2") {
     var res = 0
     for {
       a <- gt0(intVal).right
-      b <- gt0(a).right
-      c = b + intVal2
+      b = a + intVal2
+      c <- gt1(b).right
+    } res = c
+    res should equal(intVal + intVal2)
+  }
+
+  test("two right generators with foreach - fails") {
+    var res = 0
+    for {
+      a <- gt0(intVal).right
+      b <- gt1(a).right
+    } res = b
+    res should equal(0)
+  }
+
+  test("two right generators with foreach true") {
+    var res = 0
+    for {
+      a <- gt0(intVal).right
+      b = a + intVal2
+      c <- gt1(b).right
       if c > 0
     } res = c
     res should equal(intVal + intVal2)
   }
 
   test("two right generators with foreach false") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
     var res = 0
     for {
       a <- gt0(intVal).right
-      b <- gt0(a).right
-      c = b + intVal2
+      b = a + intVal2
+      c <- gt1(b).right
       if c < 0
     } res = c
     res should equal(0)
   }
 
-  test("two right generators with map true") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+  test("two right generators with map - succeeds 1") {
+    val right = for {
+      a <- gt0(intVal + intVal2).right
+      b <- gt1(a).right
+    } yield b
+    right.e should equal(Right(intVal + intVal2))
+  }
+
+  test("two right generators with map - succeeds 2") {
     val right = for {
       a <- gt0(intVal).right
-      b <- gt0(a).right
-      c = b + intVal2
+      b = a + intVal2
+      c <- gt1(b).right
+    } yield c
+    right.e should equal(Right(intVal + intVal2))
+  }
+
+  test("two right generators with map - fails") {
+    val right = for {
+      a <- gt0(intVal).right
+      b <- gt1(a).right
+    } yield b
+    right.e should equal(Left("n must be > 1: 1"))
+    right.getOrElse(0) should equal(0)
+  }
+
+  test("two right generators with map true") {
+    val right = for {
+      a <- gt0(intVal).right
+      b = a + intVal2
+      c <- gt1(b).right
       if c > 0
     } yield c
     right.e should equal(Right(intVal + intVal2))
   }
 
   test("two right generators with map true 2") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
     val right = for {
       a <- gt0(intVal).right
       b = a + intVal2
       if b > 0
-      c <- gt0(b).right
+      c <- gt1(b).right
     } yield c
     right.e should equal(Right(intVal + intVal2))
   }
 
   test("two right generators with map false") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
     val right = for {
       a <- gt0(intVal).right
-      b <- gt0(a).right
-      c = b + intVal2
+      b = a + intVal2
+      c <- gt1(b).right
       if c < 0
     } yield c
     right.e should equal(RightAsLeft(Right(intVal + intVal2)))
   }
 
   test("two right generators with map false 2") {
-    def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
     val right = for {
       a <- gt0(intVal).right
       b = a + intVal2
       if b < 0
-      c <- gt0(b).right
+      c <- gt1(b).right
     } yield c
     right.e should equal(RightAsLeft(Right(intVal + intVal2)))
   }
