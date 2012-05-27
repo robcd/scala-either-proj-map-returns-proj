@@ -325,6 +325,7 @@ object Either {
     def getOrElse[AA >: A](or: => AA) = (e: @unchecked) match {
       case Left(a) => a
       case Right(_) => or
+      case LeftAsRight(_) => or
     }
 
     /**
@@ -500,6 +501,7 @@ object Either {
      */
     def getOrElse[BB >: B](or: => BB) = (e: @unchecked) match {
       case Left(_) => or
+      case RightAsLeft(_) => or
       case Right(b) => b
     }
 

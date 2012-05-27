@@ -60,6 +60,8 @@ class Tests extends FunSuite with ShouldMatchers {
       if b > 0
     } yield b
     left.e should equal(Left(intVal + intVal2))
+    left.get should equal(intVal + intVal2)
+    left.getOrElse(0) should equal(intVal + intVal2)
   }
 
   test("left map false") {
@@ -70,6 +72,7 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     left.e should equal(LeftAsRight(Left(intVal + intVal2)))
+    left.getOrElse(0) should equal(0)
   }
 
   test("right map true") {
@@ -80,6 +83,8 @@ class Tests extends FunSuite with ShouldMatchers {
       if b > 0
     } yield b
     right.e should equal(Right(intVal + intVal2))
+    right.get should equal(intVal + intVal2)
+    right.getOrElse(0) should equal(intVal + intVal2)
   }
 
   test("right map false") {
@@ -90,6 +95,7 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     right.e should equal(RightAsLeft(Right(intVal + intVal2)))
+    right.getOrElse(0) should equal(0)
   }
 
   test("two right generators with foreach true") {
