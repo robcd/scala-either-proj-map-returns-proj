@@ -78,9 +78,10 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     left.e should equal(LeftAsRight(Left(intVal + intVal2)))
-    intercept[NoSuchElementException] {
+    val thrown = intercept[NoSuchElementException] {
       left.get
     }
+    thrown.getMessage should equal("Either.left.value on Right")
     left.getOrElse(0) should equal(0)
     left.forall(_ == intVal) should be(true) // since no elements
     left.forall(_ == intVal + intVal2) should be(true) // "
@@ -116,9 +117,10 @@ class Tests extends FunSuite with ShouldMatchers {
       if b < 0
     } yield b
     right.e should equal(RightAsLeft(Right(intVal + intVal2)))
-    intercept[NoSuchElementException] {
+    val thrown = intercept[NoSuchElementException] {
       right.get
     }
+    thrown.getMessage should equal("Either.right.value on Left")
     right.getOrElse(0) should equal(0)
     right.forall(_ == intVal) should be(true) // since no elements
     right.forall(_ == intVal + intVal2) should be(true) // "
