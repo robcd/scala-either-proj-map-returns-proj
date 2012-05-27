@@ -135,118 +135,130 @@ class Tests extends FunSuite with ShouldMatchers {
 
   test("two right generators with foreach - succeeds 1") {
     var res = 0
+    val a = intVal + intVal2
     for {
-      a <- gt0(intVal + intVal2).right
-      b <- gt1(a).right
-    } res = b
-    res should equal(intVal + intVal2)
+      b <- gt0(a).right
+      c <- gt1(b).right
+    } res = c
+    res should equal(a)
   }
 
   test("two right generators with foreach - succeeds 2") {
     var res = 0
+    val a = intVal
     for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-    } res = c
-    res should equal(intVal + intVal2)
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+    } res = d
+    res should equal(a + intVal2)
   }
 
   test("two right generators with foreach - fails") {
     var res = 0
+    val a = intVal
     for {
-      a <- gt0(intVal).right
-      b <- gt1(a).right
-    } res = b
+      b <- gt0(a).right
+      c <- gt1(b).right
+    } res = c
     res should equal(0)
   }
 
   test("two right generators with foreach true") {
     var res = 0
+    val a = intVal
     for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-      if c > 0
-    } res = c
-    res should equal(intVal + intVal2)
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+      if d > 0
+    } res = d
+    res should equal(a + intVal2)
   }
 
   test("two right generators with foreach false") {
     var res = 0
+    val a = intVal
     for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-      if c < 0
-    } res = c
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+      if d < 0
+    } res = d
     res should equal(0)
   }
 
   test("two right generators with map - succeeds 1") {
+    val a = intVal + intVal2
     val right = for {
-      a <- gt0(intVal + intVal2).right
-      b <- gt1(a).right
-    } yield b
-    right.e should equal(Right(intVal + intVal2))
+      b <- gt0(a).right
+      c <- gt1(b).right
+    } yield c
+    right.e should equal(Right(a))
   }
 
   test("two right generators with map - succeeds 2") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-    } yield c
-    right.e should equal(Right(intVal + intVal2))
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+    } yield d
+    right.e should equal(Right(a + intVal2))
   }
 
   test("two right generators with map - fails") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b <- gt1(a).right
-    } yield b
+      b <- gt0(a).right
+      c <- gt1(b).right
+    } yield c
     right.e should equal(Left("n must be > 1: 1"))
     right.getOrElse(0) should equal(0)
   }
 
   test("two right generators with map true") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-      if c > 0
-    } yield c
-    right.e should equal(Right(intVal + intVal2))
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+      if d > 0
+    } yield d
+    right.e should equal(Right(a + intVal2))
   }
 
   test("two right generators with map true 2") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      if b > 0
-      c <- gt1(b).right
-    } yield c
-    right.e should equal(Right(intVal + intVal2))
+      b <- gt0(a).right
+      c = b + intVal2
+      if c > 0
+      d <- gt1(c).right
+    } yield d
+    right.e should equal(Right(a + intVal2))
   }
 
   test("two right generators with map false") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      c <- gt1(b).right
-      if c < 0
-    } yield c
-    right.e should equal(RightAsLeft(Right(intVal + intVal2)))
+      b <- gt0(a).right
+      c = b + intVal2
+      d <- gt1(c).right
+      if d < 0
+    } yield d
+    right.e should equal(RightAsLeft(Right(a + intVal2)))
   }
 
   test("two right generators with map false 2") {
+    val a = intVal
     val right = for {
-      a <- gt0(intVal).right
-      b = a + intVal2
-      if b < 0
-      c <- gt1(b).right
-    } yield c
-    right.e should equal(RightAsLeft(Right(intVal + intVal2)))
+      b <- gt0(a).right
+      c = b + intVal2
+      if c < 0
+      d <- gt1(c).right
+    } yield d
+    right.e should equal(RightAsLeft(Right(a + intVal2)))
   }
 }
 
