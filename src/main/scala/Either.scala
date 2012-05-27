@@ -343,6 +343,7 @@ object Either {
     def forall(f: A => Boolean) = (e: @unchecked) match {
       case Left(a) => f(a)
       case Right(_) => true
+      case LeftAsRight(_) => true
     }
 
     /**
@@ -519,6 +520,7 @@ object Either {
      */
     def forall(f: B => Boolean) = (e: @unchecked) match {
       case Left(_) => true
+      case RightAsLeft(_) => true
       case Right(b) => f(b)
     }
 
