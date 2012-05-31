@@ -189,11 +189,6 @@ final case class Left[+A, +B](a: A) extends Either[A, B] {
   def isRight = false
 }
 
-private case class RightAsLeft[+A, +B](r: Right[A, B]) extends Either[A, B] {
-  def isLeft = true
-  def isRight = false
-}
-
 /**
  * The right side of the disjoint union, as opposed to the [[scala.Left]] side.
  *
@@ -201,11 +196,6 @@ private case class RightAsLeft[+A, +B](r: Right[A, B]) extends Either[A, B] {
  * @version 1.0, 11/10/2008
  */
 final case class Right[+A, +B](b: B) extends Either[A, B] {
-  def isLeft = false
-  def isRight = true
-}
-
-private case class LeftAsRight[+A, +B](l: Left[A, B]) extends Either[A, B] {
   def isLeft = false
   def isRight = true
 }
@@ -292,10 +282,10 @@ object Either {
      *
      * @throws Predef.NoSuchElementException if the projection is [[scala.Right]]
      */
-    def get = (e: @unchecked) match {
+    def get = e match {
       case Left(a) => a
       case Right(_) =>  throw new NoSuchElementException("Either.left.value on Right")
-      case LeftAsRight(_) =>  throw new NoSuchElementException("Either.left.value on Right")
+      case Either.None =>  throw new NoSuchElementException("None.get")
     }
 
     /**
@@ -307,10 +297,10 @@ object Either {
      * }}}
      * @param e The side-effecting function to execute.
      */
-    def foreach[U](f: A => U) = (e: @unchecked) match {
+    def foreach[U](f: A => U) = e match {
       case Left(a) => f(a)
       case Right(_) => {}
-      case LeftAsRight(_) => {}
+      case Either.None => {}
     }
 
     /**
@@ -323,10 +313,10 @@ object Either {
      * }}}
      *
      */
-    def getOrElse[AA >: A](or: => AA) = (e: @unchecked) match {
+    def getOrElse[AA >: A](or: => AA) = e match {
       case Left(a) => a
       case Right(_) => or
-      case LeftAsRight(_) => or
+      case Either.None => or
     }
 
     /**
@@ -340,10 +330,10 @@ object Either {
      * }}}
      *
      */
-    def forall(f: A => Boolean) = (e: @unchecked) match {
+    def forall(f: A => Boolean) = e match {
       case Left(a) => f(a)
       case Right(_) => true
-      case LeftAsRight(_) => true
+      case Either.None => true
     }
 
     /**
@@ -357,10 +347,10 @@ object Either {
      * }}}
      *
      */
-    def exists(f: A => Boolean) = (e: @unchecked) match {
+    def exists(f: A => Boolean) = e match {
       case Left(a) => f(a)
       case Right(_) => false
-      case LeftAsRight(_) => false
+      case Either.None => false
     }
 
     /**
@@ -372,15 +362,11 @@ object Either {
      * }}}
      * @param The function to bind across `Left`.
      */
-    def flatMap[BB >: B, X](f: A => LeftProjection[X, BB]): LeftProjection[X, BB] =
-      (e: @unchecked) match {
-        case Left(a) => f(a)
-        case Right(b) => LeftProjection(Right(b))
-        case LeftAsRight(Left(a)) => (f(a).e: @unchecked) match {
-          case l @ Left(_) => LeftProjection(LeftAsRight(l))
-          case r @ Right(_) => LeftProjection(r)
-        }
-      }
+    def flatMap[BB >: B, X](f: A => LeftProjection[X, BB]): LeftProjection[X, BB] = e match {
+      case Left(a) => f(a)
+      case Right(b) => LeftProjection(Right(b))
+      case Either.None => LeftProjection(Either.None)
+    }
 
     /**
      * Maps the function argument through `Left`.
@@ -390,10 +376,10 @@ object Either {
      * Right[Int, Int](12).left.map(_ + 2) // Right(12)
      * }}}
      */
-    def map[X](f: A => X): LeftProjection[X, B] = (e: @unchecked) match {
+    def map[X](f: A => X): LeftProjection[X, B] = e match {
       case Left(a) => LeftProjection(Left(f(a)))
       case Right(b) => LeftProjection(Right(b))
-      case LeftAsRight(Left(a)) => LeftProjection(LeftAsRight(Left(f(a))))
+      case Either.None => LeftProjection(Either.None)
     }
 
     /**
@@ -411,9 +397,10 @@ object Either {
     //   case Right(b) => None
     // }
 
-    def withFilter(p: A => Boolean): LeftProjection[A, B] = (e: @unchecked) match {
-      case Left(a) => if (p(a)) LeftProjection(Left(a)) else LeftProjection(LeftAsRight(Left(a)))
+    def withFilter(p: A => Boolean): LeftProjection[A, B] = e match {
+      case Left(a) => if (p(a)) LeftProjection(Left(a)) else LeftProjection(Either.None)
       case Right(b) => LeftProjection(Right(b))
+      case Either.None => LeftProjection(Either.None)
     }
 
     /**
@@ -425,10 +412,10 @@ object Either {
      * Right(12).left.toSeq // Seq()
      * }}}
      */
-    def toSeq = (e: @unchecked) match {
+    def toSeq = e match {
       case Left(a) => Seq(a)
       case Right(_) => Seq.empty
-      case LeftAsRight(_) => Seq.empty
+      case Either.None => Seq.empty
     }
 
     /**
@@ -440,10 +427,10 @@ object Either {
      * Right(12).left.toOption // None
      * }}}
      */
-    def toOption = (e: @unchecked) match {
+    def toOption = e match {
       case Left(a) => Some(a)
-      case Right(_) => None
-      case LeftAsRight(_) => None
+      case Right(_) => scala.None
+      case Either.None => scala.None
     }
   }
 
@@ -475,9 +462,9 @@ object Either {
      *
      * @throws Predef.NoSuchElementException if the projection is `Left`.
      */
-    def get = (e: @unchecked) match {
-      case Left(_) =>  throw new NoSuchElementException("Either.right.value on Left")
-      case RightAsLeft(_) =>  throw new NoSuchElementException("Either.right.value on Left")
+    def get = e match {
+      case Left(_) => throw new NoSuchElementException("Either.right.value on Left")
+      case Either.None => throw new NoSuchElementException("None.get")
       case Right(a) => a
     }
 
@@ -490,9 +477,9 @@ object Either {
      * }}}
      * @param e The side-effecting function to execute.
      */
-    def foreach[U](f: B => U) = (e: @unchecked) match {
+    def foreach[U](f: B => U) = e match {
       case Left(_) => {}
-      case RightAsLeft(_) => {}
+      case Either.None => {}
       case Right(b) => f(b)
     }
 
@@ -505,9 +492,9 @@ object Either {
      * Left(12).right.getOrElse(17)  // 17
      * }}}
      */
-    def getOrElse[BB >: B](or: => BB) = (e: @unchecked) match {
+    def getOrElse[BB >: B](or: => BB) = e match {
       case Left(_) => or
-      case RightAsLeft(_) => or
+      case Either.None => or
       case Right(b) => b
     }
 
@@ -521,9 +508,9 @@ object Either {
      * Left(12).right.forall(_ > 10)  // true
      * }}}
      */
-    def forall(f: B => Boolean) = (e: @unchecked) match {
+    def forall(f: B => Boolean) = e match {
       case Left(_) => true
-      case RightAsLeft(_) => true
+      case Either.None => true
       case Right(b) => f(b)
     }
 
@@ -537,9 +524,9 @@ object Either {
      * Left(12).right.exists(_ > 10)   // false
      * }}}
      */
-    def exists(f: B => Boolean) = (e: @unchecked) match {
+    def exists(f: B => Boolean) = e match {
       case Left(_) => false
-      case RightAsLeft(_) => false
+      case Either.None => false
       case Right(b) => f(b)
     }
 
@@ -548,15 +535,11 @@ object Either {
      *
      * @param The function to bind across `Right`.
      */
-    def flatMap[AA >: A, Y](f: B => RightProjection[AA, Y]): RightProjection[AA, Y] =
-      (e: @unchecked) match {
-        case Left(a) => RightProjection(Left(a))
-        case RightAsLeft(Right(b)) => (f(b).e: @unchecked) match {
-          case l @ Left(_) => RightProjection(l)
-          case r @ Right(_) => RightProjection(RightAsLeft(r))
-        }
-        case Right(b) => f(b)
-      }
+    def flatMap[AA >: A, Y](f: B => RightProjection[AA, Y]): RightProjection[AA, Y] = e match {
+      case Left(a) => RightProjection(Left(a))
+      case Either.None => RightProjection(Either.None)
+      case Right(b) => f(b)
+    }
 
     /**
      * The given function is applied if this is a `Right`.
@@ -566,9 +549,9 @@ object Either {
      * Left(12).right.map(x => "flower")  // Result: Left(12)
      * }}}
      */
-    def map[Y](f: B => Y): RightProjection[A, Y] = (e: @unchecked) match {
+    def map[Y](f: B => Y): RightProjection[A, Y] = e match {
       case Left(a) => RightProjection(Left(a))
-      case RightAsLeft(Right(b)) => RightProjection(RightAsLeft(Right(f(b))))
+      case Either.None => RightProjection(Either.None)
       case Right(b) => RightProjection(Right(f(b)))
     }
 
@@ -587,10 +570,11 @@ object Either {
     //   case Right(b) => if (p(b)) Some(b) else None
     // }
 
-    def withFilter(p: B => Boolean): RightProjection[A, B] = (e: @unchecked) match {
+    def withFilter(p: B => Boolean): RightProjection[A, B] = e match {
       case Left(a) => RightProjection(Left(a))
       case Right(b) =>
-        if (p(b)) RightProjection(Right(b)) else RightProjection(RightAsLeft(Right(b)))
+        if (p(b)) RightProjection(Right(b)) else RightProjection(Either.None)
+      case Either.None => RightProjection(Either.None)
     }
 
     /** Returns a `Seq` containing the `Right` value if
@@ -601,9 +585,9 @@ object Either {
      * Left(12).right.toSeq // Seq()
      * }}}
      */
-    def toSeq = (e: @unchecked) match {
+    def toSeq = e match {
       case Left(_) => Seq.empty
-      case RightAsLeft(_) => Seq.empty
+      case Either.None => Seq.empty
       case Right(b) => Seq(b)
     }
 
@@ -615,9 +599,9 @@ object Either {
      * Left(12).right.toOption // None
      * }}}
      */
-    def toOption = (e: @unchecked) match {
-      case Left(_) => None
-      case RightAsLeft(_) => None
+    def toOption = e match {
+      case Left(_) => scala.None
+      case Either.None => scala.None
       case Right(b) => Some(b)
     }
   }

@@ -74,18 +74,18 @@ class Tests extends FunSuite with ShouldMatchers {
       b = a + 1
       if b < 0
     } yield b
-    left.e should equal(LeftAsRight(Left(2)))
+    left.e.toString should equal("None")
     val thrown = intercept[NoSuchElementException] {
       left.get
     }
-    thrown.getMessage should equal("Either.left.value on Right")
+    thrown.getMessage should equal("None.get")
     left.getOrElse(0) should equal(0)
     left.forall(_ == 1) should be(true) // since no elements
     left.forall(_ == 2) should be(true) // "
     left.exists(_ == 1) should be(false) // "
     left.exists(_ == 2) should be(false) // "
     left.toSeq should equal(Seq())
-    left.toOption should equal(None)
+    left.toOption should equal(scala.None)
   }
 
   test("right map true") {
@@ -113,18 +113,18 @@ class Tests extends FunSuite with ShouldMatchers {
       b = a + 1
       if b < 0
     } yield b
-    right.e should equal(RightAsLeft(Right(2)))
+    right.e.toString should equal("None")
     val thrown = intercept[NoSuchElementException] {
       right.get
     }
-    thrown.getMessage should equal("Either.right.value on Left")
+    thrown.getMessage should equal("None.get")
     right.getOrElse(0) should equal(0)
     right.forall(_ == 1) should be(true) // since no elements
     right.forall(_ == 2) should be(true) // "
     right.exists(_ == 1) should be(false) // "
     right.exists(_ == 2) should be(false) // "
     right.toSeq should equal(Seq())
-    right.toOption should equal(None)
+    right.toOption should equal(scala.None)
   }
 
   def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
@@ -244,7 +244,7 @@ class Tests extends FunSuite with ShouldMatchers {
       d <- gt1(c).right
       if d < 0
     } yield d
-    right.e should equal(RightAsLeft(Right(2)))
+    right.e.toString should equal("None")
   }
 
   test("two right generators with map false 2") {
@@ -255,7 +255,7 @@ class Tests extends FunSuite with ShouldMatchers {
       if c < 0
       d <- gt1(c).right
     } yield d
-    right.e should equal(RightAsLeft(Right(2)))
+    right.e.toString should equal("None")
   }
 }
 
