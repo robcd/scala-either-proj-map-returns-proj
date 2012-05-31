@@ -653,4 +653,9 @@ object Either {
    */
   def cond[A, B](test: Boolean, right: => B, left: => A): Either[A, B] =
     if (test) Right(right) else Left(left)
+
+  private case object None extends Either[Nothing, Nothing] {
+    def isLeft = false
+    def isRight = false
+  }
 }
