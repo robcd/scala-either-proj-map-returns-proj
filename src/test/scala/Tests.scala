@@ -3,98 +3,35 @@ import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
 class Tests extends FunSuite with ShouldMatchers {
-  test("left foreach true") {
-    val either: Either[Int, String] = Left(1)
-    var res = 0
-    for {
-      a <- either.left
-      b = a + 1
-      if b > 0
-    } res = b
-
-    res should equal(2)
-  }
-
-  test("left foreach false") {
-    val either: Either[Int, String] = Left(1)
-    var res = 0
-    for {
-      a <- either.left
-      b = a + 1
-      if b < 0
-    } res = b
-
-    res should equal(0)
-  }
-
-  test("right foreach true") {
+  test("foreach - Right") {
     val either: Either[String, Int] = Right(1)
     var res = 0
     for {
       a <- either.right
       b = a + 1
-      if b > 0
     } res = b
+
     res should equal(2)
   }
 
-  test("right foreach false") {
-    val either: Either[String, Int] = Right(1)
+  test("foreach - Left") {
+    val either: Either[String, Int] = Left("er")
     var res = 0
     for {
       a <- either.right
       b = a + 1
-      if b < 0
     } res = b
+
     res should equal(0)
   }
 
-  test("left map true") {
-    val either: Either[Int, String] = Left(1)
-    val left = for {
-      a <- either.left
-      b = a + 1
-      if b > 0
-    } yield b
-    left.e should equal(Left(2))
-    left.get should equal(2)
-    left.getOrElse(0) should equal(2)
-    left.forall(_ == 1) should be(false)
-    left.forall(_ == 2) should be(true)
-    left.exists(_ == 1) should be(false)
-    left.exists(_ == 2) should be(true)
-    left.toSeq should equal(Seq(2))
-    left.toOption should equal(Some(2))
-  }
-
-  test("left map false") {
-    val either: Either[Int, String] = Left(1)
-    val left = for {
-      a <- either.left
-      b = a + 1
-      if b < 0
-    } yield b
-    left.e.toString should equal("None")
-    val thrown = intercept[NoSuchElementException] {
-      left.get
-    }
-    thrown.getMessage should equal("None.get")
-    left.getOrElse(0) should equal(0)
-    left.forall(_ == 1) should be(true) // since no elements
-    left.forall(_ == 2) should be(true) // "
-    left.exists(_ == 1) should be(false) // "
-    left.exists(_ == 2) should be(false) // "
-    left.toSeq should equal(Seq())
-    left.toOption should equal(scala.None)
-  }
-
-  test("right map true") {
+  test("map - Right") {
     val either: Either[String, Int] = Right(1)
     val right = for {
       a <- either.right
       b = a + 1
-      if b > 0
     } yield b
+
     right.e should equal(Right(2))
     right.get should equal(2)
     right.getOrElse(0) should equal(2)
@@ -106,41 +43,42 @@ class Tests extends FunSuite with ShouldMatchers {
     right.toOption should equal(Some(2))
   }
 
-  test("right map false") {
-    val either: Either[String, Int] = Right(1)
+  test("map - Left") {
+    val either: Either[String, Int] = Left("er")
     val right = for {
       a <- either.right
       b = a + 1
-      if b < 0
     } yield b
-    right.e.toString should equal("None")
+
+    right.e should equal(Left("er"))
+    right.getOrElse(0) should equal(0)
     val thrown = intercept[NoSuchElementException] {
       right.get
     }
-    thrown.getMessage should equal("None.get")
-    right.getOrElse(0) should equal(0)
-    right.forall(_ == 1) should be(true) // since no elements
-    right.forall(_ == 2) should be(true) // "
-    right.exists(_ == 1) should be(false) // "
-    right.exists(_ == 2) should be(false) // "
+    thrown.getMessage should equal("Either.right.value on Left")
+    right.forall(_ == 1) should be(true)
+    right.forall(_ == 2) should be(true)
+    right.exists(_ == 1) should be(false)
+    right.exists(_ == 2) should be(false)
     right.toSeq should equal(Seq())
-    right.toOption should equal(scala.None)
+    right.toOption should equal(None)
   }
 
   def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
   def gt1(n: Int): Either[String, Int] = if (n > 1) Right(n) else Left("n must be > 1: "+ n)
 
-  test("two right generators with foreach - succeeds 1") {
+  test("foreach, two generators - Right 1") {
     var res = 0
     val a = 2
     for {
       b <- gt0(a).right
       c <- gt1(b).right
     } res = c
+
     res should equal(2)
   }
 
-  test("two right generators with foreach - succeeds 2") {
+  test("foreach, two generators - Right 2") {
     var res = 0
     val a = 1
     for {
@@ -148,114 +86,119 @@ class Tests extends FunSuite with ShouldMatchers {
       c = b + 1
       d <- gt1(c).right
     } res = d
+
     res should equal(2)
   }
 
-  test("two right generators with foreach - fails") {
+  test("foreach, two generators - Right 3") {
+    var res = 0
+    val a = 2
+    for {
+      b <- gt0(a).right
+      c <- gt1(b).right
+      d = c + 1
+    } res = d
+
+    res should equal(3)
+  }
+
+  test("foreach, two generators - Left 1") {
     var res = 0
     val a = 1
     for {
       b <- gt0(a).right
       c <- gt1(b).right
     } res = c
+
     res should equal(0)
   }
 
-  test("two right generators with foreach true") {
+  test("foreach, two generators - Left 2") {
     var res = 0
     val a = 1
     for {
       b <- gt0(a).right
-      c = b + 1
+      c = b - 1
       d <- gt1(c).right
-      if d > 0
     } res = d
-    res should equal(2)
+
+    res should equal(0)
   }
 
-  test("two right generators with foreach false") {
+  test("foreach, two generators - Left 3") {
     var res = 0
     val a = 1
     for {
       b <- gt0(a).right
-      c = b + 1
-      d <- gt1(c).right
-      if d < 0
+      c <- gt1(b).right
+      d = c + 1
     } res = d
+
     res should equal(0)
   }
 
-  test("two right generators with map - succeeds 1") {
+  test("map, two generators - Right 1") {
     val a = 2
     val right = for {
       b <- gt0(a).right
       c <- gt1(b).right
     } yield c
+
     right.e should equal(Right(a))
   }
 
-  test("two right generators with map - succeeds 2") {
+  test("map, two generators - Right 2") {
     val a = 1
     val right = for {
       b <- gt0(a).right
       c = b + 1
       d <- gt1(c).right
     } yield d
+
     right.e should equal(Right(2))
   }
 
-  test("two right generators with map - fails") {
+  test("map, two generators - Right 3") {
+    val a = 2
+    val right = for {
+      b <- gt0(a).right
+      c <- gt1(b).right
+      d = c + 1
+    } yield d
+
+    right.e should equal(Right(3))
+  }
+
+  test("map, two generators - Left 1") {
     val a = 1
     val right = for {
       b <- gt0(a).right
       c <- gt1(b).right
     } yield c
+
     right.e should equal(Left("n must be > 1: 1"))
-    right.getOrElse(0) should equal(0)
   }
 
-  test("two right generators with map true") {
+  test("map, two generators - Left 2") {
     val a = 1
     val right = for {
       b <- gt0(a).right
-      c = b + 1
+      c = b - 1
       d <- gt1(c).right
-      if d > 0
     } yield d
-    right.e should equal(Right(2))
+
+    right.e should equal(Left("n must be > 1: 0"))
   }
 
-  test("two right generators with map true 2") {
+  test("map, two generators - Left 3") {
     val a = 1
     val right = for {
       b <- gt0(a).right
-      c = b + 1
-      if c > 0
-      d <- gt1(c).right
+      c <- gt1(b).right
+      d = c + 1
     } yield d
-    right.e should equal(Right(2))
-  }
 
-  test("two right generators with map false") {
-    val a = 1
-    val right = for {
-      b <- gt0(a).right
-      c = b + 1
-      d <- gt1(c).right
-      if d < 0
-    } yield d
-    right.e.toString should equal("None")
-  }
-
-  test("two right generators with map false 2") {
-    val a = 1
-    val right = for {
-      b <- gt0(a).right
-      c = b + 1
-      if c < 0
-      d <- gt1(c).right
-    } yield d
-    right.e.toString should equal("None")
+    right.e should equal(Left("n must be > 1: 1"))
   }
 }
 
