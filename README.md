@@ -7,8 +7,9 @@ either it's `Left` or it's `Right`!
 The modified version is
 [here](scala-either-proj-map-returns-proj/blob/master/src/main/scala/Either.scala).
 
-Test code is
-[here](scala-either-proj-map-returns-proj/blob/master/src/test/scala/Tests.scala),
-and there's also a test app demonstrating a definiton in a
-`for` comprehension, called
+Example code
+------------
+
+[`for` comprehension tests](scala-either-proj-map-returns-proj/blob/master/src/test/scala/Tests.scala)  
+[tests involving `Option`](scala-either-proj-map-returns-proj/blob/master/src/test/scala/TestsInvolvingOption.scala)  
 [`SaturdayNight`](scala-either-proj-map-returns-proj/blob/master/src/test/scala/SaturdayNight.scala).
