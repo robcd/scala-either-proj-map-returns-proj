@@ -12,4 +12,4 @@ Example code
 
 [`for` comprehension tests](scala-either-proj-map-returns-proj/blob/master/src/test/scala/Tests.scala)  
 [tests involving `Option`](scala-either-proj-map-returns-proj/blob/master/src/test/scala/TestsInvolvingOption.scala)  
-[`SaturdayNight`](scala-either-proj-map-returns-proj/blob/master/src/test/scala/SaturdayNight.scala).
+[`SaturdayNight`](scala-either-proj-map-returns-proj/blob/master/src/test/scala/SaturdayNight.scala)

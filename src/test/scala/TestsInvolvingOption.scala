@@ -202,28 +202,28 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   // however, this my be done more concisely using map:
 
   // Seq[String]) => Option[Sring]
-  def toHead(ss: Seq[String]) = for {
+  def toHeadOption(ss: Seq[String]) = for {
     h <- ss.headOption
     if h != ""
   } yield h
 
   test("map, Seq non-empty, head non-empty 3") {
     def read: E = Right(Seq("1st", "2nd"))
-    val  res: E2 = read.right map toHead
+    val  res: E2 = read.right map toHeadOption
 
     res.e should equal(Right(Some("1st")))
   }
 
   test("map, Seq non-empty, head empty 3") {
     def read: E = Right(Seq("", "2nd"))
-    val res = read.right map toHead
+    val res = read.right map toHeadOption
 
     res.e should equal(Right(None))
   }
 
   test("map, Seq empty 3") {
     def read: E = Right(Seq())
-    val res = read.right map toHead
+    val res = read.right map toHeadOption
 
     res.e should equal(Right(None))
   }
@@ -231,7 +231,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Left 3") {
     val ex = new Exception("er")
     def read: E = Left(ex)
-    val res = read.right map toHead
+    val res = read.right map toHeadOption
 
     res.e should equal(Left(ex))
   }
