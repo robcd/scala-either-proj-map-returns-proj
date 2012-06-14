@@ -178,6 +178,128 @@ sealed abstract class Either[+A, +B] {
    * }}}
    */
   def isRight: Boolean
+
+  /**
+   * Returns value from this `Right` or throws
+   * `Predef.NoSuchElementException` if this is a `Left`.
+   *
+   * {{{
+   * Right(12).get // 12
+   * Left(12).get // NoSuchElementException
+   * }}}
+   *
+   * @throws Predef.NoSuchElementException if the projection is `Left`.
+   */
+  def get = this match {
+    case Left(_) => throw new NoSuchElementException("Left.get")
+    case Right(b) => b
+  }
+
+  /**
+   * Returns the value from this `Right` or the given argument if this is a
+   * `Left`.
+   *
+   * {{{
+   * Right(12).getOrElse(17) // 12
+   * Left(12).getOrElse(17)  // 17
+   * }}}
+   */
+  def getOrElse[BB >: B](or: => BB) = this match {
+    case Left(_) => or
+    case Right(b) => b
+  }
+
+  /**
+   * Executes the given side-effecting function if this is a `Right`.
+   *
+   * {{{
+   * Right(12).foreach(x => println(x)) // prints "12"
+   * Left(12).foreach(x => println(x))  // doesn't print
+   * }}}
+   * @param e The side-effecting function to execute.
+   */
+  def foreach[U](f: B => U) = this match {
+    case Left(_) => {}
+    case Right(b) => f(b)
+  }
+  /**
+   * Returns `true` if `Left` or returns the result of the application of
+   * the given function to the `Right` value.
+   *
+   * {{{
+   * Right(12).forall(_ > 10) // true
+   * Right(7).forall(_ > 10)  // false
+   * Left(12).forall(_ > 10)  // true
+   * }}}
+   */
+  def forall(f: B => Boolean) = this match {
+    case Left(_) => true
+    case Right(b) => f(b)
+  }
+
+  /**
+   * Returns `false` if `Left` or returns the result of the application of
+   * the given function to the `Right` value.
+   *
+   * {{{
+   * Right(12).exists(_ > 10)  // true
+   * Right(7).exists(_ > 10)   // false
+   * Left(12).exists(_ > 10)   // false
+   * }}}
+   */
+  def exists(f: B => Boolean) = this match {
+    case Left(_) => false
+    case Right(b) => f(b)
+  }
+
+  /**
+   * Binds the given function across `Right`.
+   *
+   * @param The function to bind across `Right`.
+   */
+  def flatMap[AA >: A, Y](f: B => Either[AA, Y]) = this match {
+    case Left(a) => Left(a)
+    case Right(b) => f(b)
+  }
+
+  /**
+   * The given function is applied if this is a `Right`.
+   *
+   * {{{
+   * Right(12).map(x => "flower") // Result: Right("flower")
+   * Left(12).map(x => "flower")  // Result: Left(12)
+   * }}}
+   */
+  def map[Y](f: B => Y) = this match {
+    case Left(a) => Left(a)
+    case Right(b) => Right(f(b))
+  }
+
+  /** Returns a `Seq` containing the `Right` value if
+   *  it exists or an empty `Seq` if this is a `Left`.
+   *
+   * {{{
+   * Right(12).toSeq // Seq(12)
+   * Left(12).toSeq // Seq()
+   * }}}
+   */
+  def toSeq = this match {
+    case Left(_) => Seq.empty
+    case Right(b) => Seq(b)
+  }
+
+  /** Returns a `Some` containing the `Right` value
+   *  if it exists or a `None` if this is a `Left`.
+   *
+   * {{{
+   * Right(12).toOption // Some(12)
+   * Left(12).toOption // None
+   * }}}
+   */
+  def toOption = this match {
+    case Left(_) => scala.None
+    case Right(b) => Some(b)
+  }
 }
 
 /**
