@@ -26,7 +26,7 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
   def gt1(n: Int): RP[String, Int] =
     if (n > 1) RP(Right(n)) else RP(Left("n must be > 1: "+ n))
 
-  test("two right generators with foreach - succeeds 1") {
+  test("two rp generators with foreach - succeeds 1") {
     var res = 0
     val a = 2
     for {
@@ -36,7 +36,7 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
     res should equal(2)
   }
 
-  test("two right generators with foreach - fails") {
+  test("two rp generators with foreach - fails") {
     var res = 0
     val a = 1
     for {
@@ -46,22 +46,22 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
     res should equal(0)
   }
 
-  test("two right generators with map - succeeds 1") {
+  test("two rp generators with map - succeeds 1") {
     val a = 2
-    val right = for {
+    val rp = for {
       b <- gt0(a)
       c <- gt1(b)
     } yield c
-    right.e should equal(Right(a))
+    rp.e should equal(Right(a))
   }
 
-  test("two right generators with map - fails") {
+  test("two rp generators with map - fails") {
     val a = 1
-    val right = for {
+    val rp = for {
       b <- gt0(a)
       c <- gt1(b)
     } yield c
-    right.e should equal(Left("n must be > 1: 1"))
-    right.getOrElse(0) should equal(0)
+    rp.e should equal(Left("n must be > 1: 1"))
+    rp.getOrElse(0) should equal(0)
   }
 }
