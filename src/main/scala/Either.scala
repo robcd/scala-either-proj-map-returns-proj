@@ -38,22 +38,22 @@ import scala.{Either => _, Left => _, Right => _}
  *  A ''projection'' can be used to selectively operate on a value of type Either,
  *  depending on whether it is of type Left or Right. For example, to transform an
  *  Either using a function, in the case where it's a Left, one can first apply
- *  the `left` projection and invoke `map` on that projected Either. If a `right`
- *  projection is applied to that Left, the original Left is returned, unmodified.
+ *  the `lp` and invoke `map` on that projected Either. If an `rp`
+ *  is applied to that Left, the original Left is returned, unmodified.
  *
  *  {{{
  *  val l: Either[String, Int] = Left("flower")
  *  val r: Either[String, Int] = Right(12)
- *  l.left.map(_.size): Either[Int, Int] // Left(6)
- *  r.left.map(_.size): Either[Int, Int] // Right(12)
- *  l.right.map(_.toDouble): Either[String, Double] // Left("flower")
- *  r.right.map(_.toDouble): Either[String, Double] // Right(12.0)
+ *  l.lp.map(_.size): Either[Int, Int] // Left(6)
+ *  r.lp.map(_.size): Either[Int, Int] // Right(12)
+ *  l.rp.map(_.toDouble): Either[String, Double] // Left("flower")
+ *  r.rp.map(_.toDouble): Either[String, Double] // Right(12.0)
  *  }}}
  *
  *  Like with other types which define a `map` method, the same can be achieved
  *  using a for-comprehension:
  *  {{{
- *  for (s <- l.left) yield s.size // Left(6)
+ *  for (s <- l.lp) yield s.size // Left(6)
  *  }}}
  *
  *  To support multiple projections as generators in for-comprehensions, the Either
@@ -434,7 +434,7 @@ object Either {
    * Projects an `Either` into a `Left`.
    *
    * This allows for-comprehensions over Either instances - for example {{{
-   * for (s <- Left("flower").left) yield s.length // Left(6)
+   * for (s <- Left("flower").lp) yield s.length // Left(6)
    * }}}
    *
    * Continuing the analogy with [[scala.Option]], a `LeftProj` declares
@@ -469,11 +469,11 @@ object Either {
    *
    * // this will only be executed if interactWithDB returns a Some
    * val report =
-   *   for (r <- interactWithDB(someQuery).right) yield generateReport(r)
+   *   for (r <- interactWithDB(someQuery).rp) yield generateReport(r)
    * if (report.isRight)
    *   send(report)
    * else
-   *   log("report not generated, reason was " + report.left.get)
+   *   log("report not generated, reason was " + report.lp.get)
    * }}}
    *
    * @author <a href="mailto:research@workingmouse.com">Tony Morris</a>, Workingmouse
@@ -485,8 +485,8 @@ object Either {
      * if this is a `Right`.
      *
      * {{{
-     * Left(12).left.get // 12
-     * Right(12).left.get // NoSuchElementException
+     * Left(12).lp.get // 12
+     * Right(12).lp.get // NoSuchElementException
      * }}}
      *
      * @throws Predef.NoSuchElementException if the projection is [[scala.Right]]
@@ -500,8 +500,8 @@ object Either {
      * Executes the given side-effecting function if this is a `Left`.
      *
      * {{{
-     * Left(12).left.foreach(x => println(x))  // prints "12"
-     * Right(12).left.foreach(x => println(x)) // doesn't print
+     * Left(12).lp.foreach(x => println(x))  // prints "12"
+     * Right(12).lp.foreach(x => println(x)) // doesn't print
      * }}}
      * @param e The side-effecting function to execute.
      */
@@ -515,8 +515,8 @@ object Either {
      * `Right`.
      *
      * {{{
-     * Left(12).left.getOrElse(17)  // 12
-     * Right(12).left.getOrElse(17) // 17
+     * Left(12).lp.getOrElse(17)  // 12
+     * Right(12).lp.getOrElse(17) // 17
      * }}}
      *
      */
@@ -530,9 +530,9 @@ object Either {
      * the given function to the `Left` value.
      *
      * {{{
-     * Left(12).left.forall(_ > 10)  // true
-     * Left(7).left.forall(_ > 10)   // false
-     * Right(12).left.forall(_ > 10) // true
+     * Left(12).lp.forall(_ > 10)  // true
+     * Left(7).lp.forall(_ > 10)   // false
+     * Right(12).lp.forall(_ > 10) // true
      * }}}
      *
      */
@@ -546,9 +546,9 @@ object Either {
      * the given function to the `Left` value.
      *
      * {{{
-     * Left(12).left.exists(_ > 10)  // true
-     * Left(7).left.exists(_ > 10)   // false
-     * Right(12).left.exists(_ > 10) // false
+     * Left(12).lp.exists(_ > 10)  // true
+     * Left(7).lp.exists(_ > 10)   // false
+     * Right(12).lp.exists(_ > 10) // false
      * }}}
      *
      */
@@ -561,8 +561,8 @@ object Either {
      * Binds the given function across `Left`.
      *
      * {{{
-     * Left(12).left.flatMap(x => Left("scala")) // Left("scala")
-     * Right(12).left.flatMap(x => Left("scala") // Right(12)
+     * Left(12).lp.flatMap(x => Left("scala")) // Left("scala")
+     * Right(12).lp.flatMap(x => Left("scala") // Right(12)
      * }}}
      * @param The function to bind across `Left`.
      */
@@ -575,8 +575,8 @@ object Either {
      * Maps the function argument through `Left`.
      *
      * {{{
-     * Left(12).left.map(_ + 2) // Left(14)
-     * Right[Int, Int](12).left.map(_ + 2) // Right(12)
+     * Left(12).lp.map(_ + 2) // Left(14)
+     * Right[Int, Int](12).lp.map(_ + 2) // Right(12)
      * }}}
      */
     def map[X](f: A => X): LeftProj[X, B] = e match {
@@ -589,8 +589,8 @@ object Either {
      * `Seq` if this is a `Right`.
      *
      * {{{
-     * Left(12).left.toSeq // Seq(12)
-     * Right(12).left.toSeq // Seq()
+     * Left(12).lp.toSeq // Seq(12)
+     * Right(12).lp.toSeq // Seq()
      * }}}
      */
     def toSeq = e match {
@@ -603,8 +603,8 @@ object Either {
      * `None` if this is a `Right`.
      *
      * {{{
-     * Left(12).left.toOption // Some(12)
-     * Right(12).left.toOption // None
+     * Left(12).lp.toOption // Some(12)
+     * Right(12).lp.toOption // None
      * }}}
      */
     def toOption = e match {
@@ -774,7 +774,7 @@ object Either {
    * Projects an `Either` into a `Right`.
    *
    * This allows for-comprehensions over Either instances - for example {{{
-   * for (s <- Right("flower").right) yield s.length // Right(6)
+   * for (s <- Right("flower").rp) yield s.length // Right(6)
    * }}}
    *
    * Continuing the analogy with [[scala.Option]], a `RightProj` declares
@@ -792,8 +792,8 @@ object Either {
      * `Predef.NoSuchElementException` if this is a `Left`.
      *
      * {{{
-     * Right(12).right.get // 12
-     * Left(12).right.get // NoSuchElementException
+     * Right(12).rp.get // 12
+     * Left(12).rp.get // NoSuchElementException
      * }}}
      *
      * @throws Predef.NoSuchElementException if the projection is `Left`.
@@ -807,8 +807,8 @@ object Either {
      * Executes the given side-effecting function if this is a `Right`.
      *
      * {{{
-     * Right(12).right.foreach(x => println(x)) // prints "12"
-     * Left(12).right.foreach(x => println(x))  // doesn't print
+     * Right(12).rp.foreach(x => println(x)) // prints "12"
+     * Left(12).rp.foreach(x => println(x))  // doesn't print
      * }}}
      * @param e The side-effecting function to execute.
      */
@@ -822,8 +822,8 @@ object Either {
      * `Left`.
      *
      * {{{
-     * Right(12).right.getOrElse(17) // 12
-     * Left(12).right.getOrElse(17)  // 17
+     * Right(12).rp.getOrElse(17) // 12
+     * Left(12).rp.getOrElse(17)  // 17
      * }}}
      */
     def getOrElse[BB >: B](or: => BB) = e match {
@@ -836,9 +836,9 @@ object Either {
      * the given function to the `Right` value.
      *
      * {{{
-     * Right(12).right.forall(_ > 10) // true
-     * Right(7).right.forall(_ > 10)  // false
-     * Left(12).right.forall(_ > 10)  // true
+     * Right(12).rp.forall(_ > 10) // true
+     * Right(7).rp.forall(_ > 10)  // false
+     * Left(12).rp.forall(_ > 10)  // true
      * }}}
      */
     def forall(f: B => Boolean) = e match {
@@ -851,9 +851,9 @@ object Either {
      * the given function to the `Right` value.
      *
      * {{{
-     * Right(12).right.exists(_ > 10)  // true
-     * Right(7).right.exists(_ > 10)   // false
-     * Left(12).right.exists(_ > 10)   // false
+     * Right(12).rp.exists(_ > 10)  // true
+     * Right(7).rp.exists(_ > 10)   // false
+     * Left(12).rp.exists(_ > 10)   // false
      * }}}
      */
     def exists(f: B => Boolean) = e match {
@@ -875,8 +875,8 @@ object Either {
      * The given function is applied if this is a `Right`.
      *
      * {{{
-     * Right(12).right.map(x => "flower") // Result: Right("flower")
-     * Left(12).right.map(x => "flower")  // Result: Left(12)
+     * Right(12).rp.map(x => "flower") // Result: Right("flower")
+     * Left(12).rp.map(x => "flower")  // Result: Left(12)
      * }}}
      */
     def map[Y](f: B => Y): RightProj[A, Y] = e match {
@@ -888,8 +888,8 @@ object Either {
      *  it exists or an empty `Seq` if this is a `Left`.
      *
      * {{{
-     * Right(12).right.toSeq // Seq(12)
-     * Left(12).right.toSeq // Seq()
+     * Right(12).rp.toSeq // Seq(12)
+     * Left(12).rp.toSeq // Seq()
      * }}}
      */
     def toSeq = e match {
@@ -901,8 +901,8 @@ object Either {
      *  if it exists or a `None` if this is a `Left`.
      *
      * {{{
-     * Right(12).right.toOption // Some(12)
-     * Left(12).right.toOption // None
+     * Right(12).rp.toOption // Some(12)
+     * Left(12).rp.toOption // None
      * }}}
      */
     def toOption = e match {
