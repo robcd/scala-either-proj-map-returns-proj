@@ -67,11 +67,13 @@ sealed abstract class Either[+A, +B] {
   /**
    * Projects this `Either` as a `Left`.
    */
+  @deprecated("Either is now Right-biased", "3.0")
   def left = Either.LeftProjection(this)
 
   /**
    * Projects this `Either` as a `Right`.
    */
+  @deprecated("Either is now Right-biased", "3.0")
   def right = Either.RightProjection(this)
 
   /**
@@ -270,6 +272,7 @@ object Either {
    * @author <a href="mailto:research@workingmouse.com">Tony Morris</a>, Workingmouse
    * @version 1.0, 11/10/2008
    */
+  @deprecated("Either is now Right-biased", "3.0")
   final case class LeftProjection[+A, +B](e: Either[A, B]) {
     /**
      * Returns the value from this `Left` or throws `Predef.NoSuchElementException`
@@ -357,9 +360,9 @@ object Either {
      * }}}
      * @param The function to bind across `Left`.
      */
-    def flatMap[BB >: B, X](f: A => LeftProjection[X, BB]): LeftProjection[X, BB] = e match {
+    def flatMap[BB >: B, X](f: A => Either[X, BB]) = e match {
       case Left(a) => f(a)
-      case Right(b) => LeftProjection(Right(b))
+      case Right(b) => Right(b)
     }
 
     /**
@@ -370,9 +373,9 @@ object Either {
      * Right[Int, Int](12).left.map(_ + 2) // Right(12)
      * }}}
      */
-    def map[X](f: A => X): LeftProjection[X, B] = e match {
-      case Left(a) => LeftProjection(Left(f(a)))
-      case Right(b) => LeftProjection(Right(b))
+    def map[X](f: A => X) = e match {
+      case Left(a) => Left(f(a))
+      case Right(b) => Right(b)
     }
 
     /**
@@ -385,16 +388,10 @@ object Either {
      * Right(12).left.filter(_ > 10) // None
      * }}}
      */
-    // def filter(p: A => Boolean): Option[A] = e match {
-    //   case Left(a) => if (p(a)) Some(a) else None
-    //   case Right(b) => None
-    // }
-
-    // def withFilter(p: A => Boolean): LeftProjection[A, B] = e match {
-    //   case Left(a) => if (p(a)) LeftProjection(Left(a)) else LeftProjection(Either.None)
-    //   case Right(b) => LeftProjection(Right(b))
-    //   case Either.None => LeftProjection(Either.None)
-    // }
+    def filter(p: A => Boolean): Option[A] = e match {
+      case Left(a) => if (p(a)) Some(a) else None
+      case Right(b) => None
+    }
 
     /**
      * Returns a `Seq` containing the `Left` value if it exists or an empty
@@ -440,6 +437,7 @@ object Either {
    * @author <a href="mailto:research@workingmouse.com">Tony Morris</a>, Workingmouse
    * @version 1.0, 11/10/2008
    */
+  @deprecated("Either is now Right-biased", "3.0")
   final case class RightProjection[+A, +B](e: Either[A, B]) {
 
     /**
@@ -521,8 +519,8 @@ object Either {
      *
      * @param The function to bind across `Right`.
      */
-    def flatMap[AA >: A, Y](f: B => RightProjection[AA, Y]): RightProjection[AA, Y] = e match {
-      case Left(a) => RightProjection(Left(a))
+    def flatMap[AA >: A, Y](f: B => Either[AA, Y]) = e match {
+      case Left(a) => Left(a)
       case Right(b) => f(b)
     }
 
@@ -534,9 +532,9 @@ object Either {
      * Left(12).right.map(x => "flower")  // Result: Left(12)
      * }}}
      */
-    def map[Y](f: B => Y): RightProjection[A, Y] = e match {
-      case Left(a) => RightProjection(Left(a))
-      case Right(b) => RightProjection(Right(f(b)))
+    def map[Y](f: B => Y) = e match {
+      case Left(a) => Left(a)
+      case Right(b) => Right(f(b))
     }
 
     /** Returns `None` if this is a `Left` or if the
@@ -549,17 +547,10 @@ object Either {
      * Left(12).right.filter(_ > 10)  // None
      * }}}
      */
-    // def filter(p: B => Boolean): Option[B] = e match {
-    //   case Left(_) => None
-    //   case Right(b) => if (p(b)) Some(b) else None
-    // }
-
-    // def withFilter(p: B => Boolean): RightProjection[A, B] = e match {
-    //   case Left(a) => RightProjection(Left(a))
-    //   case Right(b) =>
-    //     if (p(b)) RightProjection(Right(b)) else RightProjection(Either.None)
-    //   case Either.None => RightProjection(Either.None)
-    // }
+    def filter(p: B => Boolean): Option[B] = e match {
+      case Left(_) => None
+      case Right(b) => if (p(b)) Some(b) else None
+    }
 
     /** Returns a `Seq` containing the `Right` value if
      *  it exists or an empty `Seq` if this is a `Left`.
@@ -590,11 +581,11 @@ object Either {
 
   @deprecated("use `x.joinLeft'", "2.8.0")
   def joinLeft[A, B](es: Either[Either[A, B], B]) =
-    es.left.flatMap(x => LeftProjection(x))
+    es.left.flatMap(x => x)
 
   @deprecated("use `x.joinRight'", "2.8.0")
   def joinRight[A, B](es: Either[A, Either[A, B]]) =
-    es.right.flatMap(x => RightProjection(x))
+    es.right.flatMap(x => x)
 
   /**
    * Takes an `Either` to its contained value within `Left` or
