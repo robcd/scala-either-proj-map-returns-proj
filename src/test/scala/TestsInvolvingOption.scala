@@ -23,7 +23,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Right(Seq("1st", "2nd"))
     var res = ""
     for {
-      ss <- read.right
+      ss <- read.rp
       h <- ss.headOption // okay that this is now an Option, provided we don't use yield;
       if h != "" // can still use 'if' following an Option (which has a filter/withFilter)
     } res = h
@@ -35,9 +35,9 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   //   def read: E = Right(Seq("1st", "2nd"))
   //   var res = ""
   //   for {
-  //     ss <- read.right
+  //     ss <- read.rp
   //     //         ^
-  //     // value withFilter is not a member of Either.RightProjection[Exception,Seq[String]]
+  //     // value withFilter is not a member of Either.RightProj[Exception,Seq[String]]
   //     if !ss.empty
   //     h = ss.head
   //   } res = h
@@ -49,7 +49,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Right(Seq("", "2nd"))
     var res = ""
     for {
-      ss <- read.right
+      ss <- read.rp
       h <- ss.headOption
       if h != ""
     } res = h
@@ -61,7 +61,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Right(Seq())
     var res = ""
     for {
-      ss <- read.right
+      ss <- read.rp
       h <- ss.headOption
       if h != ""
     } res = h
@@ -73,12 +73,12 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
 
   //   def read: E = Right(Seq("1st", "2nd"))
   //   val res = for {
-  //     ss <- read.right
+  //     ss <- read.rp
   //     h <- ss.headOption
   //   //  ^
   //   // type mismatch;
   //   //  found   : Option[String]
-  //   //  required: Either.RightProjection[?,?]
+  //   //  required: Either.RightProj[?,?]
   //     if h != ""
   //   } yield h
 
@@ -90,7 +90,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Seq non-empty, head non-empty") {
     def read: E = Right(Seq("1st", "2nd"))
     val res = for {
-      ss <- read.right.toOption
+      ss <- read.rp.toOption
       h <- ss.headOption
       if h != ""
     } yield h
@@ -101,7 +101,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Seq non-empty, head empty") {
     def read: E = Right(Seq("", "2nd"))
     val res = for {
-      ss <- read.right.toOption
+      ss <- read.rp.toOption
       h <- ss.headOption
       if h != ""
     } yield h
@@ -112,7 +112,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Seq empty") {
     def read: E = Right(Seq())
     val res = for {
-      ss <- read.right.toOption
+      ss <- read.rp.toOption
       h <- ss.headOption
       if h != ""
     } yield h
@@ -124,7 +124,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Left(new Exception("er"))
     var res = ""
     for {
-      ss <- read.right
+      ss <- read.rp
       h <- ss.headOption
       if h != ""
     } res = h
@@ -135,7 +135,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Left") {
     def read: E = Left(new Exception("er"))
     val res = for {
-      ss <- read.right.toOption
+      ss <- read.rp.toOption
       h <- ss.headOption
       if h != ""
     } yield h
@@ -143,25 +143,25 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     res should equal(None)
   }
 
-  type E2 = Either.RightProjection[Exception, Option[String]]
+  type E2 = Either.RightProj[Exception, Option[String]]
 
-  // to convert an Either.RightProjection[L, R] into an Either.RightProjection[L, S], you can
-  // write an R => Either.RightProjection[L, S]
+  // to convert an Either.RightProj[L, R] into an Either.RightProj[L, S], you can
+  // write an R => Either.RightProj[L, S]
   def read2(ss: Seq[String]): E2 = {
     val res = for {
       h <- ss.headOption
       if h != ""
     } yield h
-    Right(res).right
+    Right(res).rp
   }
-  // this may then be passed to Either.RightProjection's flatMap, and therefore used in
+  // this may then be passed to Either.RightProj's flatMap, and therefore used in
   // for-comprehensions
 
   test("map, Seq non-empty, head non-empty 2") {
     def read: E = Right(Seq("1st", "2nd"))
     val  res: E2 = for {
-      ss <- read.right // Either.RightProjection[L,    Seq[String]]
-      h <- read2(ss)   // Either.RightProjection[L, Option[String]]
+      ss <- read.rp  // Either.RightProj[L,    Seq[String]]
+      h <- read2(ss) // Either.RightProj[L, Option[String]]
     } yield h
 
     res.e should equal(Right(Some("1st")))
@@ -170,7 +170,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Seq non-empty, head empty 2") {
     def read: E = Right(Seq("", "2nd"))
     val res = for {
-      ss <- read.right
+      ss <- read.rp
       h <- read2(ss)
     } yield h
 
@@ -180,7 +180,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Seq empty 2") {
     def read: E = Right(Seq())
     val res = for {
-      ss <- read.right
+      ss <- read.rp
       h <- read2(ss)
     } yield h
 
@@ -191,7 +191,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
     val ex = new Exception("er")
     def read: E = Left(ex)
     val res = for {
-      ss <- read.right
+      ss <- read.rp
       h <- read2(ss)
     } yield h
 
@@ -209,21 +209,21 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
 
   test("map, Seq non-empty, head non-empty 3") {
     def read: E = Right(Seq("1st", "2nd"))
-    val  res: E2 = read.right map toHeadOption
+    val  res: E2 = read.rp map toHeadOption
 
     res.e should equal(Right(Some("1st")))
   }
 
   test("map, Seq non-empty, head empty 3") {
     def read: E = Right(Seq("", "2nd"))
-    val res = read.right map toHeadOption
+    val res = read.rp map toHeadOption
 
     res.e should equal(Right(None))
   }
 
   test("map, Seq empty 3") {
     def read: E = Right(Seq())
-    val res = read.right map toHeadOption
+    val res = read.rp map toHeadOption
 
     res.e should equal(Right(None))
   }
@@ -231,7 +231,7 @@ class TestsInvolvingOption extends FunSuite with ShouldMatchers {
   test("map, Left 3") {
     val ex = new Exception("er")
     def read: E = Left(ex)
-    val res = read.right map toHeadOption
+    val res = read.rp map toHeadOption
 
     res.e should equal(Left(ex))
   }

@@ -67,7 +67,7 @@ sealed abstract class Either[+A, +B] {
   /**
    * Projects this `Either` as a `Left`.
    */
-  @deprecated("use lp instead", "?")
+  @deprecated("use lp instead", "3.0")
   def left = Either.LeftProjection(this)
   /**
    * Projects this `Either` as a `Left`.
@@ -77,7 +77,7 @@ sealed abstract class Either[+A, +B] {
   /**
    * Projects this `Either` as a `Right`.
    */
-  @deprecated("use rp instead", "?")
+  @deprecated("use rp instead", "3.0")
   def right = Either.RightProjection(this)
   /**
    * Projects this `Either` as a `Right`.
@@ -280,7 +280,7 @@ object Either {
    * @author <a href="mailto:research@workingmouse.com">Tony Morris</a>, Workingmouse
    * @version 1.0, 11/10/2008
    */
-  @deprecated("use LeftProj instead", "?")
+  @deprecated("use LeftProj instead", "3.0")
   final case class LeftProjection[+A, +B](e: Either[A, B]) {
     /**
      * Returns the value from this `Left` or throws `Predef.NoSuchElementException`
@@ -493,7 +493,7 @@ object Either {
      */
     def get = e match {
       case Left(a) => a
-      case Right(_) =>  throw new NoSuchElementException("Either.left.value on Right")
+      case Right(_) =>  throw new NoSuchElementException("Either.lp.value on Right")
     }
 
     /**
@@ -628,7 +628,7 @@ object Either {
    * @author <a href="mailto:research@workingmouse.com">Tony Morris</a>, Workingmouse
    * @version 1.0, 11/10/2008
    */
-  @deprecated("use RightProj instead", "?")
+  @deprecated("use RightProj instead", "3.0")
   final case class RightProjection[+A, +B](e: Either[A, B]) {
 
     /**
@@ -799,7 +799,7 @@ object Either {
      * @throws Predef.NoSuchElementException if the projection is `Left`.
      */
     def get = e match {
-      case Left(_) => throw new NoSuchElementException("Either.right.value on Left")
+      case Left(_) => throw new NoSuchElementException("Either.rp.value on Left")
       case Right(a) => a
     }
 

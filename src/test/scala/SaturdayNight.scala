@@ -63,9 +63,9 @@ object ClubbedToDeath extends Nightclub {
 
     //PERFORM THE CHECKS USING Monadic "for comprehension" SUGAR
     val right = for {
-      a <- checkAge(p).right
-      b <- checkClothes(a).right
-      c <- checkSobriety(b).right
+      a <- checkAge(p).rp
+      b <- checkClothes(a).rp
+      c <- checkSobriety(b).rp
       amount = if (c.gender == Gender.Female) 0D else 5D
     } yield amount
     right.e

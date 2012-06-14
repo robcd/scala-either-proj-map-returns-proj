@@ -18,8 +18,8 @@ import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
 class TestChecksReturningProj extends FunSuite with ShouldMatchers {
-  type RP[L, R] = Either.RightProjection[L, R]
-  def RP = Either.RightProjection
+  type RP[L, R] = Either.RightProj[L, R]
+  def RP = Either.RightProj
 
   def gt0(n: Int): RP[String, Int] =
     if (n > 0) RP(Right(n)) else RP(Left("n must be > 0: "+ n))
