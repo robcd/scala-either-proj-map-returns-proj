@@ -62,13 +62,13 @@ object ClubbedToDeath extends Nightclub {
   def costToEnter(p: Person): Either[String, Double] = {
 
     //PERFORM THE CHECKS USING Monadic "for comprehension" SUGAR
-    val right = for {
+    val rp = for {
       a <- checkAge(p).rp
       b <- checkClothes(a).rp
       c <- checkSobriety(b).rp
       amount = if (c.gender == Gender.Female) 0D else 5D
     } yield amount
-    right.e
+    rp.e
   }
 }
 
