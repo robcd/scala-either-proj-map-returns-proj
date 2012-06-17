@@ -13,16 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import org.scalatest.{FunSuite, matchers}
 import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
-class Tests extends FunSuite with ShouldMatchers {
+class rightbiased_Tests extends FunSuite with ShouldMatchers {
   test("foreach - Right") {
     val either: Either[String, Int] = Right(1)
     var res = 0
     for {
-      a <- either.rp
+      a <- either
       b = a + 1
     } res = b
 
@@ -33,7 +34,7 @@ class Tests extends FunSuite with ShouldMatchers {
     val either: Either[String, Int] = Left("er")
     var res = 0
     for {
-      a <- either.rp
+      a <- either
       b = a + 1
     } res = b
 
@@ -42,41 +43,41 @@ class Tests extends FunSuite with ShouldMatchers {
 
   test("map - Right") {
     val either: Either[String, Int] = Right(1)
-    val rp = for {
-      a <- either.rp
+    val res = for {
+      a <- either
       b = a + 1
     } yield b
 
-    rp.e should equal(Right(2))
-    rp.get should equal(2)
-    rp.getOrElse(0) should equal(2)
-    rp.forall(_ == 1) should be(false)
-    rp.forall(_ == 2) should be(true)
-    rp.exists(_ == 1) should be(false)
-    rp.exists(_ == 2) should be(true)
-    rp.toSeq should equal(Seq(2))
-    rp.toOption should equal(Some(2))
+    res should equal(Right(2))
+    res.get should equal(2)
+    res.getOrElse(0) should equal(2)
+    res.forall(_ == 1) should be(false)
+    res.forall(_ == 2) should be(true)
+    res.exists(_ == 1) should be(false)
+    res.exists(_ == 2) should be(true)
+    res.toSeq should equal(Seq(2))
+    res.toOption should equal(Some(2))
   }
 
   test("map - Left") {
     val either: Either[String, Int] = Left("er")
-    val rp = for {
-      a <- either.rp
+    val res = for {
+      a <- either
       b = a + 1
     } yield b
 
-    rp.e should equal(Left("er"))
-    rp.getOrElse(0) should equal(0)
+    res should equal(Left("er"))
+    res.getOrElse(0) should equal(0)
     val thrown = intercept[NoSuchElementException] {
-      rp.get
+      res.get
     }
-    thrown.getMessage should equal("Either.rp.value on Left")
-    rp.forall(_ == 1) should be(true)
-    rp.forall(_ == 2) should be(true)
-    rp.exists(_ == 1) should be(false)
-    rp.exists(_ == 2) should be(false)
-    rp.toSeq should equal(Seq())
-    rp.toOption should equal(None)
+    thrown.getMessage should equal("Left.get")
+    res.forall(_ == 1) should be(true)
+    res.forall(_ == 2) should be(true)
+    res.exists(_ == 1) should be(false)
+    res.exists(_ == 2) should be(false)
+    res.toSeq should equal(Seq())
+    res.toOption should equal(None)
   }
 
   def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
@@ -86,8 +87,8 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 2
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a)
+      c <- gt1(b)
     } res = c
 
     res should equal(2)
@@ -97,9 +98,9 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
+      b <- gt0(a)
       c = b + 1
-      d <- gt1(c).rp
+      d <- gt1(c)
     } res = d
 
     res should equal(2)
@@ -109,8 +110,8 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 2
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a)
+      c <- gt1(b)
       d = c + 1
     } res = d
 
@@ -121,8 +122,8 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a)
+      c <- gt1(b)
     } res = c
 
     res should equal(0)
@@ -132,9 +133,9 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
+      b <- gt0(a)
       c = b - 1
-      d <- gt1(c).rp
+      d <- gt1(c)
     } res = d
 
     res should equal(0)
@@ -144,8 +145,8 @@ class Tests extends FunSuite with ShouldMatchers {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a)
+      c <- gt1(b)
       d = c + 1
     } res = d
 
@@ -154,66 +155,66 @@ class Tests extends FunSuite with ShouldMatchers {
 
   test("map, two generators - Right 1") {
     val a = 2
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val res = for {
+      b <- gt0(a)
+      c <- gt1(b)
     } yield c
 
-    rp.e should equal(Right(a))
+    res should equal(Right(a))
   }
 
   test("map, two generators - Right 2") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
+    val res = for {
+      b <- gt0(a)
       c = b + 1
-      d <- gt1(c).rp
+      d <- gt1(c)
     } yield d
 
-    rp.e should equal(Right(2))
+    res should equal(Right(2))
   }
 
   test("map, two generators - Right 3") {
     val a = 2
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val res = for {
+      b <- gt0(a)
+      c <- gt1(b)
       d = c + 1
     } yield d
 
-    rp.e should equal(Right(3))
+    res should equal(Right(3))
   }
 
   test("map, two generators - Left 1") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val res = for {
+      b <- gt0(a)
+      c <- gt1(b)
     } yield c
 
-    rp.e should equal(Left("n must be > 1: 1"))
+    res should equal(Left("n must be > 1: 1"))
   }
 
   test("map, two generators - Left 2") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
+    val res = for {
+      b <- gt0(a)
       c = b - 1
-      d <- gt1(c).rp
+      d <- gt1(c)
     } yield d
 
-    rp.e should equal(Left("n must be > 1: 0"))
+    res should equal(Left("n must be > 1: 0"))
   }
 
   test("map, two generators - Left 3") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val res = for {
+      b <- gt0(a)
+      c <- gt1(b)
       d = c + 1
     } yield d
 
-    rp.e should equal(Left("n must be > 1: 1"))
+    res should equal(Left("n must be > 1: 1"))
   }
 }
 

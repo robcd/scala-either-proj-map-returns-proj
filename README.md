@@ -1,15 +1,17 @@
-The project description about says it all.
+branch: add_right-bias
+----------------------
 
-However, note that support for `if` in `for` comprehensions has now
-been removed, on the grounds that an empty result isn't appropriate -
-either it's `Left` or it's `Right`!
+[This](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias/src/main/scala/Either.scala) version of `scala.Either` retains its capability for unbiased usage
+(which is now fixed), via the new `lp` and `rp` methods, and gains the
+capability for right-biased usage.
 
-The modified version is
-[here](/robcd/scala-either-proj-map-returns-proj/blob/lp_rp/src/main/scala/Either.scala).
+(It is therefore, at the same time, both unbiased and right-biased!)
 
 Example code
 ------------
 
-[`for` comprehension tests](/robcd/scala-either-proj-map-returns-proj/blob/lp_rp/src/test/scala/Tests.scala)  
-[tests involving `Option`](/robcd/scala-either-proj-map-returns-proj/blob/lp_rp/src/test/scala/TestsInvolvingOption.scala)  
-[`SaturdayNight`](/robcd/scala-either-proj-map-returns-proj/blob/lp_rp/src/test/scala/SaturdayNight.scala)
+[`for` comprehension tests (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias/src/test/scala/unbiased_Tests.scala)  
+[`for` comprehension tests (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias-biased/src/test/scala/rightbiased_Tests.scala)  
+[tests involving `Option` (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias/src/test/scala/TestsInvolvingOption.scala)  
+[tests involving `Option` (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias/src/test/scala/TestsInvolvingOption.scala)  
+[Nightclub tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias/src/test/scala/SaturdayNight.scala)
