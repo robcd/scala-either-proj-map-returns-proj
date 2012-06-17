@@ -7,7 +7,7 @@ trait DanielsPatternMatchingExample {
 
   def either: E[Pair]
 
-  //for ((n, s) <- either) yield s
+  for ((n, s) <- either) yield s
   //               ^
   // error: value filter is not a member of DanielsPatternMatchingExample.this.E[(Int, String)]
 

@@ -72,28 +72,37 @@ object rightbiased_ClubbedToDeath extends Nightclub {
   }
 }
 
-import org.scalatest.{FunSuite, matchers}
-import matchers.ShouldMatchers
+//import org.scalatest.{FunSuite, matchers}
+//import matchers.ShouldMatchers
 
 // Now let's see these in action
-class rightbiased_ClubbedToDeathTest extends FunSuite with ShouldMatchers {
+//class rightbiased_ClubbedToDeathTest extends FunSuite with ShouldMatchers {
+object rightbiased_ClubbedToDeathTest extends App {
+  def test(s: String)(b: => Unit) { b }
+
   import people._
 
   test("costToEnter") {
-    rightbiased_ClubbedToDeath.costToEnter(Dave) should equal(Left("Too Old!"))
+    //rightbiased_ClubbedToDeath.costToEnter(Dave) should equal(Left("Too Old!"))
+    assert(rightbiased_ClubbedToDeath.costToEnter(Dave) == Left("Too Old!"))
     //scalaz.Validation[String,Double] = Failure(Too Old!)
 
-    rightbiased_ClubbedToDeath.costToEnter(Ken) should equal(Right(5.0))
+    //rightbiased_ClubbedToDeath.costToEnter(Ken) should equal(Right(5.0))
+    assert(rightbiased_ClubbedToDeath.costToEnter(Ken) == Right(5.0))
     //scalaz.Validation[String,Double] = Success(5.0)
 
-    rightbiased_ClubbedToDeath.costToEnter(Ruby) should equal(Right(0.0))
+    //rightbiased_ClubbedToDeath.costToEnter(Ruby) should equal(Right(0.0))
+    assert(rightbiased_ClubbedToDeath.costToEnter(Ruby) == Right(0.0))
     // scalaz.Validation[String,Double] = Success(0.0)
 
-    rightbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) should equal(Left("Too Young!"))
+    //rightbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) should equal(Left("Too Young!"))
+    assert(rightbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) == Left("Too Young!"))
     // scalaz.Validation[String,Double] = Failure(Too Young!)
 
-    rightbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) should
-      equal(Left("Sober Up!"))
+    //rightbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) should
+    //  equal(Left("Sober Up!"))
+    assert(rightbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) ==
+      Left("Sober Up!"))
     // scalaz.Validation[String,Double] = Failure(Sober Up!)
   }
 }
@@ -116,24 +125,33 @@ object unbiased_ClubbedToDeath extends Nightclub {
 }
 
 // Now let's see these in action
-class unbiased_ClubbedToDeathTest extends FunSuite with ShouldMatchers {
+//class unbiased_ClubbedToDeathTest extends FunSuite with ShouldMatchers {
+object unbiased_ClubbedToDeathTest extends App {
+  def test(s: String)(b: => Unit) { b }
+
   import people._
 
   test("costToEnter") {
-    unbiased_ClubbedToDeath.costToEnter(Dave) should equal(Left("Too Old!"))
+    //unbiased_ClubbedToDeath.costToEnter(Dave) should equal(Left("Too Old!"))
+    assert(unbiased_ClubbedToDeath.costToEnter(Dave) == Left("Too Old!"))
     //scalaz.Validation[String,Double] = Failure(Too Old!)
 
-    unbiased_ClubbedToDeath.costToEnter(Ken) should equal(Right(5.0))
+    //unbiased_ClubbedToDeath.costToEnter(Ken) should equal(Right(5.0))
+    assert(unbiased_ClubbedToDeath.costToEnter(Ken) == Right(5.0))
     //scalaz.Validation[String,Double] = Success(5.0)
 
-    unbiased_ClubbedToDeath.costToEnter(Ruby) should equal(Right(0.0))
+    //unbiased_ClubbedToDeath.costToEnter(Ruby) should equal(Right(0.0))
+    assert(unbiased_ClubbedToDeath.costToEnter(Ruby) == Right(0.0))
     // scalaz.Validation[String,Double] = Success(0.0)
 
-    unbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) should equal(Left("Too Young!"))
+    //unbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) should equal(Left("Too Young!"))
+    assert(unbiased_ClubbedToDeath.costToEnter(Ruby.copy(age = 17)) == Left("Too Young!"))
     // scalaz.Validation[String,Double] = Failure(Too Young!)
 
-    unbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) should
-      equal(Left("Sober Up!"))
+    //unbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) should
+    //  equal(Left("Sober Up!"))
+    assert(unbiased_ClubbedToDeath.costToEnter(Ken.copy(sobriety = Sobriety.Unconscious)) ==
+      Left("Sober Up!"))
     // scalaz.Validation[String,Double] = Failure(Sober Up!)
   }
 }

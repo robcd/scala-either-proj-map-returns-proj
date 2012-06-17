@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.scalatest.{FunSuite, matchers}
-import matchers.ShouldMatchers
+//import org.scalatest.{FunSuite, matchers}
+//import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
-class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
+//class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
+object rightbiased_TestsInvolvingOption extends App {
+  def test(s: String)(b: => Unit) { b }
+
   type E = Either[Exception, Seq[String]]
 
   test("foreach, Seq non-empty, head non-empty") {
@@ -29,7 +32,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != "" // can still use 'if' following an Option (which has a filter/withFilter)
     } res = h
 
-    res should equal("1st")
+    //res should equal("1st")
+    assert(res == "1st")
   }
 
   // test("foreach, Seq non-empty, head non-empty 2") {
@@ -55,7 +59,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } res = h
 
-    res should equal("")
+    //res should equal("")
+    assert(res == "")
   }
 
   test("foreach, Seq empty") {
@@ -67,7 +72,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } res = h
 
-    res should equal("")
+    //res should equal("")
+    assert(res == "")
   }
 
   // test("map, Seq non-empty, head non-empty") {
@@ -96,7 +102,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } yield h
 
-    res should equal(Some("1st"))
+    //res should equal(Some("1st"))
+    assert(res == Some("1st"))
   }
 
   test("map, Seq non-empty, head empty") {
@@ -107,7 +114,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } yield h
 
-    res should equal(None)
+    //res should equal(None)
+    assert(res == None)
   }
 
   test("map, Seq empty") {
@@ -118,7 +126,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } yield h
 
-    res should equal(None)
+    //res should equal(None)
+    assert(res == None)
   }
 
   test("foreach, Left") {
@@ -130,7 +139,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } res = h
 
-    res should equal("")
+    //res should equal("")
+    assert(res == "")
   }
 
   test("map, Left") {
@@ -141,7 +151,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       if h != ""
     } yield h
 
-    res should equal(None)
+    //res should equal(None)
+    assert(res == None)
   }
 
   type E2 = Either[Exception, Option[String]]
@@ -165,7 +176,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       h <- read2(ss) // Either[L, Option[String]]
     } yield h
 
-    res should equal(Right(Some("1st")))
+    //res should equal(Right(Some("1st")))
+    assert(res ==Right(Some("1st")))
   }
 
   test("map, Seq non-empty, head empty 2") {
@@ -175,7 +187,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       h <- read2(ss)
     } yield h
 
-    res should equal(Right(None))
+    //res should equal(Right(None))
+    assert(res == Right(None))
   }
 
   test("map, Seq empty 2") {
@@ -185,7 +198,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       h <- read2(ss)
     } yield h
 
-    res should equal(Right(None))
+    //res should equal(Right(None))
+    assert(res == Right(None))
   }
 
   test("map, Left 2") {
@@ -196,7 +210,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
       h <- read2(ss)
     } yield h
 
-    res should equal(Left(ex))
+    //res should equal(Left(ex))
+    assert(res == Left(ex))
   }
   // the previous four tests show how to convert from an R to an S without losing your L
 
@@ -212,21 +227,24 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Right(Seq("1st", "2nd"))
     val  res: E2 = read map toHeadOption
 
-    res should equal(Right(Some("1st")))
+    //res should equal(Right(Some("1st")))
+    assert(res == Right(Some("1st")))
   }
 
   test("map, Seq non-empty, head empty 3") {
     def read: E = Right(Seq("", "2nd"))
     val res = read map toHeadOption
 
-    res should equal(Right(None))
+    //res should equal(Right(None))
+    assert(res == Right(None))
   }
 
   test("map, Seq empty 3") {
     def read: E = Right(Seq())
     val res = read map toHeadOption
 
-    res should equal(Right(None))
+    //res should equal(Right(None))
+    assert(res == Right(None))
   }
 
   test("map, Left 3") {
@@ -234,7 +252,8 @@ class rightbiased_TestsInvolvingOption extends FunSuite with ShouldMatchers {
     def read: E = Left(ex)
     val res = read map toHeadOption
 
-    res should equal(Left(ex))
+    //res should equal(Left(ex))
+    assert(res == Left(ex))
   }
 }
 

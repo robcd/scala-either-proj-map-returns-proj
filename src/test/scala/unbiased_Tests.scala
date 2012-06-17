@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.scalatest.{FunSuite, matchers}
-import matchers.ShouldMatchers
+//import org.scalatest.{FunSuite, matchers}
+//import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
-class unbiased_Tests extends FunSuite with ShouldMatchers {
+//class unbiased_Tests extends FunSuite with ShouldMatchers {
+object unbiased_Tests extends App {
+  def test(s: String)(b: => Unit) { b }
+
   test("foreach - Right") {
     val either: Either[String, Int] = Right(1)
     var res = 0
@@ -26,7 +29,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       b = a + 1
     } res = b
 
-    res should equal(2)
+    //res should equal(2)
+    assert(res == 2)
   }
 
   test("foreach - Left") {
@@ -37,7 +41,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       b = a + 1
     } res = b
 
-    res should equal(0)
+    //res should equal(0)
+    assert(res == 0)
   }
 
   test("map - Right") {
@@ -47,15 +52,25 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       b = a + 1
     } yield b
 
-    rp.e should equal(Right(2))
-    rp.get should equal(2)
-    rp.getOrElse(0) should equal(2)
-    rp.forall(_ == 1) should be(false)
-    rp.forall(_ == 2) should be(true)
-    rp.exists(_ == 1) should be(false)
-    rp.exists(_ == 2) should be(true)
-    rp.toSeq should equal(Seq(2))
-    rp.toOption should equal(Some(2))
+    // rp.e should equal(Right(2))
+    // rp.get should equal(2)
+    // rp.getOrElse(0) should equal(2)
+    // rp.forall(_ == 1) should be(false)
+    // rp.forall(_ == 2) should be(true)
+    // rp.exists(_ == 1) should be(false)
+    // rp.exists(_ == 2) should be(true)
+    // rp.toSeq should equal(Seq(2))
+    // rp.toOption should equal(Some(2))
+
+    assert(rp.e == Right(2))
+    assert(rp.get == 2)
+    assert(rp.getOrElse(0) == 2)
+    assert(rp.forall(_ == 1) == false)
+    assert(rp.forall(_ == 2) == true)
+    assert(rp.exists(_ == 1) == false)
+    assert(rp.exists(_ == 2) == true)
+    assert(rp.toSeq == Seq(2))
+    assert(rp.toOption == Some(2))
   }
 
   test("map - Left") {
@@ -65,18 +80,31 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       b = a + 1
     } yield b
 
-    rp.e should equal(Left("er"))
-    rp.getOrElse(0) should equal(0)
-    val thrown = intercept[NoSuchElementException] {
-      rp.get
-    }
-    thrown.getMessage should equal("Either.rp.value on Left")
-    rp.forall(_ == 1) should be(true)
-    rp.forall(_ == 2) should be(true)
-    rp.exists(_ == 1) should be(false)
-    rp.exists(_ == 2) should be(false)
-    rp.toSeq should equal(Seq())
-    rp.toOption should equal(None)
+    // rp.e should equal(Left("er"))
+    // rp.getOrElse(0) should equal(0)
+    // val thrown = intercept[NoSuchElementException] {
+    //   rp.get
+    // }
+    // thrown.getMessage should equal("Either.rp.value on Left")
+    // rp.forall(_ == 1) should be(true)
+    // rp.forall(_ == 2) should be(true)
+    // rp.exists(_ == 1) should be(false)
+    // rp.exists(_ == 2) should be(false)
+    // rp.toSeq should equal(Seq())
+    // rp.toOption should equal(None)
+
+    assert(rp.e == Left("er"))
+    assert(rp.getOrElse(0) == 0)
+    // val thrown = intercept[NoSuchElementException] {
+    //   rp.get
+    // }
+    // thrown.getMessage should equal("Either.rp.value on Left")
+    assert(rp.forall(_ == 1) == true)
+    assert(rp.forall(_ == 2) == true)
+    assert(rp.exists(_ == 1) == false)
+    assert(rp.exists(_ == 2) == false)
+    assert(rp.toSeq == Seq())
+    assert(rp.toOption == None)
   }
 
   def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
@@ -90,7 +118,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       c <- gt1(b).rp
     } res = c
 
-    res should equal(2)
+    //res should equal(2)
+    assert(res == 2)
   }
 
   test("foreach, two generators - Right 2") {
@@ -102,7 +131,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d <- gt1(c).rp
     } res = d
 
-    res should equal(2)
+    //res should equal(2)
+    assert(res == 2)
   }
 
   test("foreach, two generators - Right 3") {
@@ -114,7 +144,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d = c + 1
     } res = d
 
-    res should equal(3)
+    //res should equal(3)
+    assert(res == 3)
   }
 
   test("foreach, two generators - Left 1") {
@@ -125,7 +156,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       c <- gt1(b).rp
     } res = c
 
-    res should equal(0)
+    //res should equal(0)
+    assert(res == 0)
   }
 
   test("foreach, two generators - Left 2") {
@@ -137,7 +169,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d <- gt1(c).rp
     } res = d
 
-    res should equal(0)
+    //res should equal(0)
+    assert(res == 0)
   }
 
   test("foreach, two generators - Left 3") {
@@ -149,7 +182,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d = c + 1
     } res = d
 
-    res should equal(0)
+    //res should equal(0)
+    assert(res == 0)
   }
 
   test("map, two generators - Right 1") {
@@ -159,7 +193,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       c <- gt1(b).rp
     } yield c
 
-    rp.e should equal(Right(a))
+    //rp.e should equal(Right(a))
+    assert(rp.e == Right(a))
   }
 
   test("map, two generators - Right 2") {
@@ -170,7 +205,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d <- gt1(c).rp
     } yield d
 
-    rp.e should equal(Right(2))
+    //rp.e should equal(Right(2))
+    assert(rp.e == Right(2))
   }
 
   test("map, two generators - Right 3") {
@@ -181,7 +217,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d = c + 1
     } yield d
 
-    rp.e should equal(Right(3))
+    //rp.e should equal(Right(3))
+    assert(rp.e == Right(3))
   }
 
   test("map, two generators - Left 1") {
@@ -191,7 +228,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       c <- gt1(b).rp
     } yield c
 
-    rp.e should equal(Left("n must be > 1: 1"))
+    //rp.e should equal(Left("n must be > 1: 1"))
+    assert(rp.e == Left("n must be > 1: 1"))
   }
 
   test("map, two generators - Left 2") {
@@ -202,7 +240,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d <- gt1(c).rp
     } yield d
 
-    rp.e should equal(Left("n must be > 1: 0"))
+    //rp.e should equal(Left("n must be > 1: 0"))
+    assert(rp.e == Left("n must be > 1: 0"))
   }
 
   test("map, two generators - Left 3") {
@@ -213,7 +252,8 @@ class unbiased_Tests extends FunSuite with ShouldMatchers {
       d = c + 1
     } yield d
 
-    rp.e should equal(Left("n must be > 1: 1"))
+    //rp.e should equal(Left("n must be > 1: 1"))
+    assert(rp.e == Left("n must be > 1: 1"))
   }
 }
 

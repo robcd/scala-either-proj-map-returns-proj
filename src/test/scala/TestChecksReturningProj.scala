@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.scalatest.{FunSuite, matchers}
-import matchers.ShouldMatchers
+//import org.scalatest.{FunSuite, matchers}
+//import matchers.ShouldMatchers
 import scala.{Either => _, Left => _, Right => _}
 
-class TestChecksReturningProj extends FunSuite with ShouldMatchers {
+//class TestChecksReturningProj extends FunSuite with ShouldMatchers {
+object TestChecksReturningProj extends App {
+  def test(s: String)(b: => Unit) { b }
+
   type RP[L, R] = Either.RightProj[L, R]
   def RP = Either.RightProj
 
@@ -33,7 +36,9 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
       b <- gt0(a)
       c <- gt1(b)
     } res = c
-    res should equal(2)
+
+    //res should equal(2)
+    assert(res == 2)
   }
 
   test("two rp generators with foreach - fails") {
@@ -43,7 +48,9 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
       b <- gt0(a)
       c <- gt1(b)
     } res = c
-    res should equal(0)
+
+    //res should equal(0)
+    assert(res == 0)
   }
 
   test("two rp generators with map - succeeds 1") {
@@ -52,7 +59,9 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
       b <- gt0(a)
       c <- gt1(b)
     } yield c
-    rp.e should equal(Right(a))
+
+    //rp.e should equal(Right(a))
+    assert(rp.e == Right(a))
   }
 
   test("two rp generators with map - fails") {
@@ -61,7 +70,10 @@ class TestChecksReturningProj extends FunSuite with ShouldMatchers {
       b <- gt0(a)
       c <- gt1(b)
     } yield c
-    rp.e should equal(Left("n must be > 1: 1"))
-    rp.getOrElse(0) should equal(0)
+
+    //rp.e should equal(Left("n must be > 1: 1"))
+    assert(rp.e == Left("n must be > 1: 1"))
+    //rp.getOrElse(0) should equal(0)
+    assert(rp.getOrElse(0) == 0)
   }
 }
