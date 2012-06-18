@@ -18,9 +18,9 @@ N.B. All 'tests' have been converted to test apps, since a Scala 2.10
 ScalaTest is not yet available.
 
 [`for` comprehension tests (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/unbiased_Tests.scala)  
-[`for` comprehension tests (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10-biased/src/test/scala/rightbiased_Tests.scala)  
-[tests involving `Option` (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/TestsInvolvingOption.scala)  
-[tests involving `Option` (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/TestsInvolvingOption.scala)  
+[`for` comprehension tests (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/rightbiased_Tests.scala)  
+[tests involving `Option` (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/unbiased_TestsInvolvingOption.scala)  
+[tests involving `Option` (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/rightbiased_TestsInvolvingOption.scala)  
 [`for` comprehension tests involving pattern-matching (unbiased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/unbiased_PatternMatchingTests.scala)  
-[`for` comprehension tests involving pattern-matching (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/unbiased_PatternMatchingTests.scala)  
-[Nightclub tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/SaturdayNight.scala)
+[`for` comprehension tests involving pattern-matching (right-biased usage)](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/rightbiased_PatternMatchingTests.scala)  
+[Nightclub tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10/src/test/scala/nightclub_tests.scala)
