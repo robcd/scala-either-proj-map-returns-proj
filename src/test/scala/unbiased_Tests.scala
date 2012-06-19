@@ -21,8 +21,10 @@ import scala.{Either => _, Left => _, Right => _}
 object unbiased_Tests extends App {
   def test(s: String)(b: => Unit) { b }
 
+  type E = Either[String, Int]
+
   test("foreach - Right") {
-    val either: Either[String, Int] = Right(1)
+    val either: E = Right(1)
     var res = 0
     for {
       a <- either.rp
@@ -34,7 +36,7 @@ object unbiased_Tests extends App {
   }
 
   test("foreach - Left") {
-    val either: Either[String, Int] = Left("er")
+    val either: E = Left("er")
     var res = 0
     for {
       a <- either.rp
@@ -46,7 +48,7 @@ object unbiased_Tests extends App {
   }
 
   test("map - Right") {
-    val either: Either[String, Int] = Right(1)
+    val either: E = Right(1)
     val rp = for {
       a <- either.rp
       b = a + 1
@@ -74,7 +76,7 @@ object unbiased_Tests extends App {
   }
 
   test("map - Left") {
-    val either: Either[String, Int] = Left("er")
+    val either: E = Left("er")
     val rp = for {
       a <- either.rp
       b = a + 1
@@ -107,8 +109,8 @@ object unbiased_Tests extends App {
     assert(rp.toOption == None)
   }
 
-  def gt0(n: Int): Either[String, Int] = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
-  def gt1(n: Int): Either[String, Int] = if (n > 1) Right(n) else Left("n must be > 1: "+ n)
+  def gt0(n: Int): E = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
+  def gt1(n: Int): E = if (n > 1) Right(n) else Left("n must be > 1: "+ n)
 
   test("foreach, two generators - Right 1") {
     var res = 0
@@ -254,6 +256,41 @@ object unbiased_Tests extends App {
 
     //rp.e should equal(Left("n must be > 1: 1"))
     assert(rp.e == Left("n must be > 1: 1"))
+  }
+
+  def toStringIfGt0(n: Int): E = if (n > 0) Left(n.toString) else Right(n)
+
+  test("foreach, Right, Left") {
+    val e: E = Right(1)
+    var res = (0, "")
+    for {
+      a <- e.rp
+      s <- toStringIfGt0(a).lp
+    } res = (a, s)
+
+    assert(res == (1, "1"))
+  }
+
+  test("foreach, Right, Right") {
+    val e: E = Right(0)
+    var res = (0, "")
+    for {
+      a <- e.rp
+      s <- toStringIfGt0(a).lp
+    } res = (a, s)
+
+    assert(res == (0, ""))
+  }
+
+  test("foreach, Left, Left") {
+    val e: E = Left("er")
+    var res = (0, "")
+    for {
+      a <- e.rp
+      s <- toStringIfGt0(a).lp
+    } res = (a, s)
+
+    assert(res == (0, ""))
   }
 }
 
