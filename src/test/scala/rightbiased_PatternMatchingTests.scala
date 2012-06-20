@@ -250,5 +250,82 @@ object rightbiased_PatternMatchingTests extends App {
     //rp.e should equal(Left("n must be > 1: 1"))
     assert(res == Left(ex))
   }
+
+  // example of irrefutable match which still uses filter
+  //
+  // test("foreach - Right, Some") {
+  //   val e: Either[Exception, Some[Int]] = Right(Some(1))
+  //   var res = 0
+  //   for {
+  //     Some(a) <- e
+  //     //         ^
+  //     // value filter is not a member of Either[Exception,Some[Int]]
+  //     b = a + 1
+  //   } res = b
+
+  //   assert(res == 2)
+  // }
+
+  type E3 = E[Option[Int]]
+
+  test("Option: foreach - Right, Some") {
+    val e3: E3 = Right(Some(1))
+    var res = 0
+    for {
+      // Some(a) <- e3 
+      // can't do the above - do the following, instead:
+      opt <- e3
+      a <- opt
+      b = a + 1
+    } res = b
+
+    assert(res == 2)
+  }
+
+  // B => E[C]
+  // Option[Int] => E[Int]
+  def toEOfInt(opt: Option[Int]): E[Int] = opt match {
+    case None => Left(new Exception("Option was None"))
+    case Some(a) => Right(a)
+  }
+
+  test("Option: map - Right, Some, using toEOfInt") {
+    val e3: E3 = Right(Some(1))
+    val res = for {
+      // Some(a) <- e3 
+      // can't do the above - do the following, instead:
+      opt <- e3          // Either[Exception, Option[Int]]
+      a <- toEOfInt(opt) // Either[Exception, Int]
+      b = a + 1
+    } yield b
+
+    assert(res == Right(2))
+  }
+
+  def toEOfInt2(opt: Option[Int]): E[Int] =
+    opt.fold[E[Int]](Left(new Exception("Option was None")))(Right.apply)
+
+  test("Option: map - Right, Some, using toEOfInt2") {
+    val e3: E3 = Right(Some(1))
+    val res = for {
+      opt <- e3           // Either[Exception, Option[Int]]
+      a <- toEOfInt2(opt) // Either[Exception, Int]
+      b = a + 1
+    } yield b
+
+    assert(res == Right(2))
+  }
+
+  test("Option: map - Right, Some, in-situ toEOfInt2") {
+    val e3: E3 = Right(Some(1))
+    val res = for {
+      opt <- e3         // Either[Exception, Option[Int]]
+      a <- opt.fold[E[Int]](Left(new Exception("Option was None")))(Right.apply)
+                        // Either[Exception, Int]
+      b = a + 1
+    } yield b
+
+    assert(res == Right(2))
+  }
 }
 
