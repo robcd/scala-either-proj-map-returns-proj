@@ -327,5 +327,132 @@ object rightbiased_PatternMatchingTests extends App {
 
     assert(res == Right(2))
   }
+
+  import language.implicitConversions
+  implicit def f(opt: Option[Int]) = opt.toString
+
+  test("foreach, Right(Some), no def") {
+    val either: Either[String, Option[Int]] = Right(Some(1))
+    var res = 0
+    for {
+      Some(n) <- either
+    } res = n
+
+    assert(res == 1)
+  }
+
+  test("foreach, Right(None), no def") {
+    val either: Either[String, Option[Int]] = Right(None)
+    var res = 0
+    for {
+      Some(n) <- either
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Left, no def") {
+    val either: Either[String, Option[Int]] = Left("er")
+    var res = 0
+    for {
+      Some(n) <- either
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Right(Some), def") {
+    import language.implicitConversions
+    implicit def f(opt: Option[Int]) = opt.toString
+    val either: Either[String, Option[Int]] = Right(Some(1))
+    var res = 0
+    for {
+      Some(n) <- either
+      m = n + 1
+    } res = m
+
+    assert(res == 2)
+  }
+
+  test("foreach, Right(None), def") {
+    val either: Either[String, Option[Int]] = Right(None)
+    var res = 0
+    for {
+      Some(n) <- either
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("foreach, Left, def") {
+    val either: Either[String, Option[Int]] = Left("er")
+    var res = 0
+    for {
+      Some(n) <- either
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("map, Right(Some), no def") {
+    val either: Either[String, Option[Int]] = Right(Some(1))
+    val res = for {
+      Some(n) <- either
+    } yield n
+
+    assert(res == Right(1))
+  }
+
+  test("map, Right(None), no def") {
+    val either: Either[String, Option[Int]] = Right(None)
+    val res = for {
+      Some(n) <- either
+    } yield n
+
+    assert(res == Left("None"))
+  }
+
+  test("map, Left, no def") {
+    val either: Either[String, Option[Int]] = Left("er")
+    val res = for {
+      Some(n) <- either
+    } yield n
+
+    assert(res == Left("er"))
+  }
+
+  test("map, Right(Some), def") {
+    import language.implicitConversions
+    implicit def f(opt: Option[Int]) = opt.toString
+    val either: Either[String, Option[Int]] = Right(Some(1))
+    val res = for {
+      Some(n) <- either
+      m = n + 1
+    } yield m
+
+    assert(res == Right(2))
+  }
+
+  test("map, Right(None), def") {
+    val either: Either[String, Option[Int]] = Right(None)
+    val res = for {
+      Some(n) <- either
+      m = n + 1
+    } yield m
+
+    assert(res == Left("None"))
+  }
+
+  test("map, Left, def") {
+    val either: Either[String, Option[Int]] = Left("er")
+    val res = for {
+      Some(n) <- either
+      m = n + 1
+    } yield m
+
+    assert(res == Left("er"))
+  }
 }
 
