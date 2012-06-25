@@ -12,8 +12,12 @@ implicit, parameter list, containing a conversion, `bToA`, that is used
 to obtain a `Left` result whenever the predicate is false.
 
 It works, at least for the right-biased `for` comprehension tests
-involving [if]() and [pattern-matching]() so far carried out, provided
-the appropriate implicit conversions are supplied (as indicated by the compiler).
+involving
+[if](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/rightbiased_Tests_with_if.scala)
+and
+[pattern-matching](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/rightbiased_PatternMatchingTests.scala)
+so far carried out, provided the appropriate implicit conversions are
+supplied (as indicated by the compiler).
 
 Example code
 ------------
