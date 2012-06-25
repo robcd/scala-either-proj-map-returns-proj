@@ -309,6 +309,13 @@ sealed abstract class Either[+A, +B] {
     case Left(_) => scala.None
     case Right(b) => Some(b)
   }
+
+  def withFilter(p: B => Boolean)(implicit bToA: B => A): Either[A, B] = this match {
+    //                                     ^
+    // covariant type A occurs in contravariant position in type B => A of value bToA
+    case Left(a) => Left(a)
+    case Right(b) => if (p(b)) Right(b) else Left(bToA(b))
+  }
 }
 
 /**
