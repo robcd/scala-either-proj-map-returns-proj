@@ -310,10 +310,10 @@ sealed abstract class Either[+A, +B] {
     case Right(b) => Some(b)
   }
 
-  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Any => AA): Either[AA, B] =
+  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Left.Convert => AA): Either[AA, B] =
     this match {
       case Left(a) => Left(a)
-      case Right(b) => if (p(b)) Right(b) else Left(bToA(b))
+      case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
     }
 }
 
@@ -326,6 +326,17 @@ sealed abstract class Either[+A, +B] {
 final case class Left[+A, +B](a: A) extends Either[A, B] {
   def isLeft = true
   def isRight = false
+}
+
+/**
+ * companion object.
+ */
+object Left {
+  /**
+   * wraps a value to be converted to a value of type A by an implicit conversion, in order that
+   * a new Left instance may be created by Either's withFilter method.
+   */
+  case class Convert(any: Any)
 }
 
 /**

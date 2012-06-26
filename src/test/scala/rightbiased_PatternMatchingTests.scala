@@ -329,7 +329,7 @@ object rightbiased_PatternMatchingTests extends App {
   }
 
   import language.implicitConversions
-  implicit def f(any: Any) = any.toString
+  implicit def f(convert: Left.Convert) = convert.any.toString
 
   test("foreach, Right(Some), no def") {
     val either: Either[String, Option[Int]] = Right(Some(1))
