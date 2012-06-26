@@ -310,10 +310,11 @@ sealed abstract class Either[+A, +B] {
     case Right(b) => Some(b)
   }
 
-  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: B => AA): Either[AA, B] = this match {
-    case Left(a) => Left(a)
-    case Right(b) => if (p(b)) Right(b) else Left(bToA(b))
-  }
+  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Any => AA): Either[AA, B] =
+    this match {
+      case Left(a) => Left(a)
+      case Right(b) => if (p(b)) Right(b) else Left(bToA(b))
+    }
 }
 
 /**

@@ -329,7 +329,7 @@ object rightbiased_PatternMatchingTests extends App {
   }
 
   import language.implicitConversions
-  implicit def f(opt: Option[Int]) = opt.toString
+  implicit def f(any: Any) = any.toString
 
   test("foreach, Right(Some), no def") {
     val either: Either[String, Option[Int]] = Right(Some(1))
@@ -362,8 +362,6 @@ object rightbiased_PatternMatchingTests extends App {
   }
 
   test("foreach, Right(Some), def") {
-    import language.implicitConversions
-    implicit def f(opt: Option[Int]) = opt.toString
     val either: Either[String, Option[Int]] = Right(Some(1))
     var res = 0
     for {
@@ -424,8 +422,6 @@ object rightbiased_PatternMatchingTests extends App {
   }
 
   test("map, Right(Some), def") {
-    import language.implicitConversions
-    implicit def f(opt: Option[Int]) = opt.toString
     val either: Either[String, Option[Int]] = Right(Some(1))
     val res = for {
       Some(n) <- either

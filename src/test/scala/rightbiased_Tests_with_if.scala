@@ -23,7 +23,7 @@ import language.implicitConversions
 object rightbiased_Tests_with_if extends App {
   def test(s: String)(b: => Unit) { b }
 
-  implicit def f(n: Int) = n.toString
+  implicit def f(any: Any) = any.toString
 
   test("foreach - Right, no def, true") {
     val either: Either[String, Int] = Right(1)
@@ -68,8 +68,6 @@ object rightbiased_Tests_with_if extends App {
 
     assert(res == 0)
   }
-
-  implicit def f(tup: (Int, Int)) = tup.toString
 
   test("foreach - Right, def, true") {
     val either: Either[String, Int] = Right(1)
