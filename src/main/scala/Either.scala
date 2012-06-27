@@ -284,6 +284,12 @@ sealed abstract class Either[+A, +B] {
     case Right(b) => Right(f(b))
   }
 
+  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Left.Convert => AA): Either[AA, B] =
+    this match {
+      case Left(a) => Left(a)
+      case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
+    }
+
   /** Returns a `Seq` containing the `Right` value if
    *  it exists or an empty `Seq` if this is a `Left`.
    *
@@ -309,12 +315,6 @@ sealed abstract class Either[+A, +B] {
     case Left(_) => scala.None
     case Right(b) => Some(b)
   }
-
-  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Left.Convert => AA): Either[AA, B] =
-    this match {
-      case Left(a) => Left(a)
-      case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
-    }
 }
 
 /**
@@ -348,6 +348,17 @@ object Left {
 final case class Right[+A, +B](b: B) extends Either[A, B] {
   def isLeft = false
   def isRight = true
+}
+
+/**
+ * companion object.
+ */
+object Right {
+  /**
+   * wraps a value to be converted to a value of type B by an implicit conversion, in order that
+   * a new Right instance may be created by LeftProj's withFilter method.
+   */
+  case class Convert(any: Any)
 }
 
 object Either {
@@ -724,6 +735,15 @@ object Either {
       case Right(b) => LeftProj(Right(b))
     }
 
+    def withFilter[BB >: B](p: A => Boolean)
+                           (implicit aToB: Right.Convert => BB): LeftProj[A, BB] = {
+      val e2: Either[A, BB] = e match {
+        case Left(a) => if (p(a)) Left(a) else Right(aToB(Right.Convert(a)))
+        case Right(b) => Right(b)
+      }
+      LeftProj(e2)
+    }
+
     /**
      * Returns a `Seq` containing the `Left` value if it exists or an empty
      * `Seq` if this is a `Right`.
@@ -1022,6 +1042,15 @@ object Either {
     def map[Y](f: B => Y): RightProj[A, Y] = e match {
       case Left(a) => RightProj(Left(a))
       case Right(b) => RightProj(Right(f(b)))
+    }
+
+    def withFilter[AA >: A](p: B => Boolean)
+                           (implicit bToA: Left.Convert => AA): RightProj[AA, B] = {
+      val e2: Either[AA, B] = e match {
+        case Left(a) => Left(a)
+        case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
+      }
+      RightProj(e2)
     }
 
     /** Returns a `Seq` containing the `Right` value if
