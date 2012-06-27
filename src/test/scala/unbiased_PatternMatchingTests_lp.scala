@@ -338,4 +338,126 @@ object unbiased_PatternMatchingTests_lp extends App {
 
     assert(res.e == Right("er"))
   }
+
+  type E4 = Either[Either[String, Int], String]
+
+  test("foreach, Left(Right), no def") {
+    val either: E4 = Left(Right(1))
+    var res = 0
+    for {
+      Right(n) <- either.lp
+    } res = n
+
+    assert(res == 1)
+  }
+
+  test("foreach, Left(Left), no def") {
+    val either: E4 = Left(Left("er"))
+    var res = 0
+    for {
+      Right(n) <- either.lp
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Right, no def") {
+    val either: E4 = Right("er")
+    var res = 0
+    for {
+      Right(n) <- either.lp
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Left(Right), def") {
+    val either: E4 = Left(Right(1))
+    var res = 0
+    for {
+      Right(n) <- either.lp
+      m = n + 1
+    } res = m
+
+    assert(res == 2)
+  }
+
+  test("foreach, Left(Left), def") {
+    val either: E4 = Left(Left("er"))
+    var res = 0
+    for {
+      Right(n) <- either.lp
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("foreach, Right, def") {
+    val either: E4 = Right("er")
+    var res = 0
+    for {
+      Right(n) <- either.lp
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("map, Left(Right), no def") {
+    val either: E4 = Left(Right(1))
+    val res = for {
+      Right(n) <- either.lp
+    } yield n
+
+    assert(res.e == Left(1))
+  }
+
+  test("map, Left(Left), no def") {
+    val either: E4 = Left(Left("er"))
+    val res = for {
+      Right(n) <- either.lp
+    } yield n
+
+    assert(res.e == Right("Left(er)"))
+  }
+
+  test("map, Right, no def") {
+    val either: E4 = Right("er")
+    val res = for {
+      Right(n) <- either.lp
+    } yield n
+
+    assert(res.e == Right("er"))
+  }
+
+  test("map, Left(Right), def") {
+    val either: E4 = Left(Right(1))
+    val res = for {
+      Right(n) <- either.lp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Left(2))
+  }
+
+  test("map, Left(Left), def") {
+    val either: E4 = Left(Left("er"))
+    val res = for {
+      Right(n) <- either.lp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Right("Left(er)"))
+  }
+
+  test("map, Right, def") {
+    val either: E4 = Right("er")
+    val res = for {
+      Right(n) <- either.lp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Right("er"))
+  }
 }
