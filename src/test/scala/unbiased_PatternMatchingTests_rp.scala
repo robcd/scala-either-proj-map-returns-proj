@@ -18,7 +18,7 @@
 import scala.{Either => _, Left => _, Right => _}
 
 //class unbiased_PatternMatchingTests extends FunSuite with ShouldMatchers {
-object unbiased_PatternMatchingTests extends App {
+object unbiased_PatternMatchingTests_rp extends App {
   def test(s: String)(b: => Unit) { b }
 
   type E[B] = Either[Exception, B]
@@ -250,5 +250,129 @@ object unbiased_PatternMatchingTests extends App {
     //rp.e should equal(Left("n must be > 1: 1"))
     assert(rp.e == Left(ex))
   }
-}
 
+  import language.implicitConversions
+  implicit def f(convert: Left.Convert) = convert.any.toString
+
+  type E3 = Either[String, Option[Int]]
+
+  test("foreach, Right(Some), no def") {
+    val either: E3 = Right(Some(1))
+    var res = 0
+    for {
+      Some(n) <- either.rp
+    } res = n
+
+    assert(res == 1)
+  }
+
+  test("foreach, Right(None), no def") {
+    val either: E3 = Right(None)
+    var res = 0
+    for {
+      Some(n) <- either.rp
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Left, no def") {
+    val either: E3 = Left("er")
+    var res = 0
+    for {
+      Some(n) <- either.rp
+    } res = n
+
+    assert(res == 0)
+  }
+
+  test("foreach, Right(Some), def") {
+    val either: E3 = Right(Some(1))
+    var res = 0
+    for {
+      Some(n) <- either.rp
+      m = n + 1
+    } res = m
+
+    assert(res == 2)
+  }
+
+  test("foreach, Right(None), def") {
+    val either: E3 = Right(None)
+    var res = 0
+    for {
+      Some(n) <- either.rp
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("foreach, Left, def") {
+    val either: E3 = Left("er")
+    var res = 0
+    for {
+      Some(n) <- either.rp
+      m = n + 1
+    } res = m
+
+    assert(res == 0)
+  }
+
+  test("map, Right(Some), no def") {
+    val either: E3 = Right(Some(1))
+    val res = for {
+      Some(n) <- either.rp
+    } yield n
+
+    assert(res.e == Right(1))
+  }
+
+  test("map, Right(None), no def") {
+    val either: E3 = Right(None)
+    val res = for {
+      Some(n) <- either.rp
+    } yield n
+
+    assert(res.e == Left("None"))
+  }
+
+  test("map, Left, no def") {
+    val either: E3 = Left("er")
+    val res = for {
+      Some(n) <- either.rp
+    } yield n
+
+    assert(res.e == Left("er"))
+  }
+
+  test("map, Right(Some), def") {
+    val either: E3 = Right(Some(1))
+    val res = for {
+      Some(n) <- either.rp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Right(2))
+  }
+
+  test("map, Right(None), def") {
+    val either: E3 = Right(None)
+    val res = for {
+      Some(n) <- either.rp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Left("None"))
+  }
+
+  test("map, Left, def") {
+    val either: E3 = Left("er")
+    val res = for {
+      Some(n) <- either.rp
+      m = n + 1
+    } yield m
+
+    assert(res.e == Left("er"))
+  }
+}
