@@ -18,16 +18,16 @@
 import scala.{Either => _, Left => _, Right => _}
 
 //class unbiased_Tests extends FunSuite with ShouldMatchers {
-object unbiased_Tests extends App {
+object unbiased_Tests_lp extends App {
   def test(s: String)(b: => Unit) { b }
 
-  type E = Either[String, Int]
+  type E = Either[Int, String]
 
-  test("foreach - Right") {
-    val either: E = Right(1)
+  test("foreach - Left") {
+    val either: E = Left(1)
     var res = 0
     for {
-      a <- either.rp
+      a <- either.lp
       b = a + 1
     } res = b
 
@@ -35,11 +35,11 @@ object unbiased_Tests extends App {
     assert(res == 2)
   }
 
-  test("foreach - Left") {
-    val either: E = Left("er")
+  test("foreach - Right") {
+    val either: E = Right("er")
     var res = 0
     for {
-      a <- either.rp
+      a <- either.lp
       b = a + 1
     } res = b
 
@@ -47,10 +47,10 @@ object unbiased_Tests extends App {
     assert(res == 0)
   }
 
-  test("map - Right") {
-    val either: E = Right(1)
-    val rp = for {
-      a <- either.rp
+  test("map - Left") {
+    val either: E = Left(1)
+    val lp = for {
+      a <- either.lp
       b = a + 1
     } yield b
 
@@ -64,21 +64,21 @@ object unbiased_Tests extends App {
     // rp.toSeq should equal(Seq(2))
     // rp.toOption should equal(Some(2))
 
-    assert(rp.e == Right(2))
-    assert(rp.get == 2)
-    assert(rp.getOrElse(0) == 2)
-    assert(rp.forall(_ == 1) == false)
-    assert(rp.forall(_ == 2) == true)
-    assert(rp.exists(_ == 1) == false)
-    assert(rp.exists(_ == 2) == true)
-    assert(rp.toSeq == Seq(2))
-    assert(rp.toOption == Some(2))
+    assert(lp.e == Left(2))
+    assert(lp.get == 2)
+    assert(lp.getOrElse(0) == 2)
+    assert(lp.forall(_ == 1) == false)
+    assert(lp.forall(_ == 2) == true)
+    assert(lp.exists(_ == 1) == false)
+    assert(lp.exists(_ == 2) == true)
+    assert(lp.toSeq == Seq(2))
+    assert(lp.toOption == Some(2))
   }
 
-  test("map - Left") {
-    val either: E = Left("er")
-    val rp = for {
-      a <- either.rp
+  test("map - Right") {
+    val either: E = Right("er")
+    val lp = for {
+      a <- either.lp
       b = a + 1
     } yield b
 
@@ -95,54 +95,54 @@ object unbiased_Tests extends App {
     // rp.toSeq should equal(Seq())
     // rp.toOption should equal(None)
 
-    assert(rp.e == Left("er"))
-    assert(rp.getOrElse(0) == 0)
+    assert(lp.e == Right("er"))
+    assert(lp.getOrElse(0) == 0)
     // val thrown = intercept[NoSuchElementException] {
     //   rp.get
     // }
     // thrown.getMessage should equal("Either.rp.value on Left")
-    assert(rp.forall(_ == 1) == true)
-    assert(rp.forall(_ == 2) == true)
-    assert(rp.exists(_ == 1) == false)
-    assert(rp.exists(_ == 2) == false)
-    assert(rp.toSeq == Seq())
-    assert(rp.toOption == None)
+    assert(lp.forall(_ == 1) == true)
+    assert(lp.forall(_ == 2) == true)
+    assert(lp.exists(_ == 1) == false)
+    assert(lp.exists(_ == 2) == false)
+    assert(lp.toSeq == Seq())
+    assert(lp.toOption == None)
   }
 
-  def gt0(n: Int): E = if (n > 0) Right(n) else Left("n must be > 0: "+ n)
-  def gt1(n: Int): E = if (n > 1) Right(n) else Left("n must be > 1: "+ n)
+  def gt0(n: Int): E = if (n > 0) Left(n) else Right("n must be > 0: "+ n)
+  def gt1(n: Int): E = if (n > 1) Left(n) else Right("n must be > 1: "+ n)
 
-  test("foreach, two generators - Right 1") {
+  test("foreach, two generators - Left 1") {
     var res = 0
     val a = 2
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a).lp
+      c <- gt1(b).lp
     } res = c
 
     //res should equal(2)
     assert(res == 2)
   }
 
-  test("foreach, two generators - Right 2") {
+  test("foreach, two generators - Left 2") {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
+      b <- gt0(a).lp
       c = b + 1
-      d <- gt1(c).rp
+      d <- gt1(c).lp
     } res = d
 
     //res should equal(2)
     assert(res == 2)
   }
 
-  test("foreach, two generators - Right 3") {
+  test("foreach, two generators - Left 3") {
     var res = 0
     val a = 2
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a).lp
+      c <- gt1(b).lp
       d = c + 1
     } res = d
 
@@ -150,144 +150,144 @@ object unbiased_Tests extends App {
     assert(res == 3)
   }
 
-  test("foreach, two generators - Left 1") {
+  test("foreach, two generators - Right 1") {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a).lp
+      c <- gt1(b).lp
     } res = c
 
     //res should equal(0)
     assert(res == 0)
   }
 
-  test("foreach, two generators - Left 2") {
+  test("foreach, two generators - Right 2") {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
+      b <- gt0(a).lp
       c = b - 1
-      d <- gt1(c).rp
+      d <- gt1(c).lp
     } res = d
 
     //res should equal(0)
     assert(res == 0)
   }
 
-  test("foreach, two generators - Left 3") {
+  test("foreach, two generators - Right 3") {
     var res = 0
     val a = 1
     for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+      b <- gt0(a).lp
+      c <- gt1(b).lp
       d = c + 1
     } res = d
 
     //res should equal(0)
     assert(res == 0)
-  }
-
-  test("map, two generators - Right 1") {
-    val a = 2
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
-    } yield c
-
-    //rp.e should equal(Right(a))
-    assert(rp.e == Right(a))
-  }
-
-  test("map, two generators - Right 2") {
-    val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c = b + 1
-      d <- gt1(c).rp
-    } yield d
-
-    //rp.e should equal(Right(2))
-    assert(rp.e == Right(2))
-  }
-
-  test("map, two generators - Right 3") {
-    val a = 2
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
-      d = c + 1
-    } yield d
-
-    //rp.e should equal(Right(3))
-    assert(rp.e == Right(3))
   }
 
   test("map, two generators - Left 1") {
-    val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val a = 2
+    val lp = for {
+      b <- gt0(a).lp
+      c <- gt1(b).lp
     } yield c
 
-    //rp.e should equal(Left("n must be > 1: 1"))
-    assert(rp.e == Left("n must be > 1: 1"))
+    //rp.e should equal(Right(a))
+    assert(lp.e == Left(a))
   }
 
   test("map, two generators - Left 2") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c = b - 1
-      d <- gt1(c).rp
+    val lp = for {
+      b <- gt0(a).lp
+      c = b + 1
+      d <- gt1(c).lp
     } yield d
 
-    //rp.e should equal(Left("n must be > 1: 0"))
-    assert(rp.e == Left("n must be > 1: 0"))
+    //rp.e should equal(Right(2))
+    assert(lp.e == Left(2))
   }
 
   test("map, two generators - Left 3") {
+    val a = 2
+    val lp = for {
+      b <- gt0(a).lp
+      c <- gt1(b).lp
+      d = c + 1
+    } yield d
+
+    //rp.e should equal(Right(3))
+    assert(lp.e == Left(3))
+  }
+
+  test("map, two generators - Right 1") {
     val a = 1
-    val rp = for {
-      b <- gt0(a).rp
-      c <- gt1(b).rp
+    val lp = for {
+      b <- gt0(a).lp
+      c <- gt1(b).lp
+    } yield c
+
+    //rp.e should equal(Left("n must be > 1: 1"))
+    assert(lp.e == Right("n must be > 1: 1"))
+  }
+
+  test("map, two generators - Right 2") {
+    val a = 1
+    val lp = for {
+      b <- gt0(a).lp
+      c = b - 1
+      d <- gt1(c).lp
+    } yield d
+
+    //rp.e should equal(Left("n must be > 1: 0"))
+    assert(lp.e == Right("n must be > 1: 0"))
+  }
+
+  test("map, two generators - Right 3") {
+    val a = 1
+    val lp = for {
+      b <- gt0(a).lp
+      c <- gt1(b).lp
       d = c + 1
     } yield d
 
     //rp.e should equal(Left("n must be > 1: 1"))
-    assert(rp.e == Left("n must be > 1: 1"))
+    assert(lp.e == Right("n must be > 1: 1"))
   }
 
-  def toStringIfGt0(n: Int): E = if (n > 0) Left(n.toString) else Right(n)
+  def toStringIfGt0(n: Int): E = if (n > 0) Right(n.toString) else Left(n)
 
-  test("foreach, Right, Left") {
-    val e: E = Right(1)
+  test("foreach, Left, Right") {
+    val e: E = Left(1)
     var res = (0, "")
     for {
-      a <- e.rp
-      s <- toStringIfGt0(a).lp
+      a <- e.lp
+      s <- toStringIfGt0(a).rp
     } res = (a, s)
 
     assert(res == (1, "1"))
   }
 
-  test("foreach, Right, Right") {
-    val e: E = Right(0)
+  test("foreach, Left, Left") {
+    val e: E = Left(0)
     var res = (0, "")
     for {
-      a <- e.rp
-      s <- toStringIfGt0(a).lp
+      a <- e.lp
+      s <- toStringIfGt0(a).rp
     } res = (a, s)
 
     assert(res == (0, ""))
   }
 
-  test("foreach, Left, Left") {
-    val e: E = Left("er")
+  test("foreach, Right, Right") {
+    val e: E = Right("er")
     var res = (0, "")
     for {
-      a <- e.rp
-      s <- toStringIfGt0(a).lp
+      a <- e.lp
+      s <- toStringIfGt0(a).rp
     } res = (a, s)
 
     assert(res == (0, ""))

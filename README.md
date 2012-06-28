@@ -39,7 +39,8 @@ Example code
 N.B. All 'tests' have been converted to test apps, since a Scala 2.10
 ScalaTest is not yet available.
 
-`for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/unbiased_Tests.scala) (unbiased usage)  
+`for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/unbiased_Tests_lp.scala) (unbiased usage, `lp`)  
+`for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/unbiased_Tests_rp.scala) (unbiased usage, `rp`)  
 `for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/rightbiased_Tests.scala) (right-biased usage)  
 `for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/unbiased_Tests_with_if_lp.scala) involving `if` (unbiased usage, `lp`)  
 `for` comprehension [tests](/robcd/scala-either-proj-map-returns-proj/blob/add_right-bias_2-10_withFilter/src/test/scala/unbiased_Tests_with_if_rp.scala) involving `if` (unbiased usage, `rp`)  
