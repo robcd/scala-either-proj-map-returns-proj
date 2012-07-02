@@ -159,6 +159,29 @@ object rightbiased_Tests_with_if extends App {
     assert(res == Left("(1,2)"))
   }
 
+  test("map - Right, def, false 2") {
+    val either: Either[String, Int] = Right(1)
+    val res = for {
+      a <- either
+      b = 2
+      if b < 0
+    } yield b
+
+    assert(res == Left("(1,2)"))
+  }
+
+  test("map - Right, def, false 3") {
+    val either: Either[String, Int] = Right(1)
+    val res = for {
+      a <- either
+      c = 1.5
+      b = 2
+      if b < 0
+    } yield b
+
+    assert(res == Left("(1,1.5,2)"))
+  }
+
   test("map - Left, no def, true") {
     val either: Either[String, Int] = Left("er")
     val res = for {
