@@ -284,7 +284,7 @@ sealed abstract class Either[+A, +B] {
     case Right(b) => Right(f(b))
   }
 
-  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Left.Convert => AA): Either[AA, B] =
+  def withFilter[AA >: A](p: B => Boolean)(implicit bToA: Left.Convert[B] => AA): Either[AA, B] =
     this match {
       case Left(a) => Left(a)
       case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
@@ -336,7 +336,7 @@ object Left {
    * wraps a value to be converted to a value of type A by an implicit conversion, in order that
    * a new Left instance may be created by Either's withFilter method.
    */
-  case class Convert(any: Any)
+  case class Convert[+B](b: B)
 }
 
 /**
@@ -358,7 +358,7 @@ object Right {
    * wraps a value to be converted to a value of type B by an implicit conversion, in order that
    * a new Right instance may be created by LeftProj's withFilter method.
    */
-  case class Convert(any: Any)
+  case class Convert[+A](a: A)
 }
 
 object Either {
@@ -736,7 +736,7 @@ object Either {
     }
 
     def withFilter[BB >: B](p: A => Boolean)
-                           (implicit aToB: Right.Convert => BB): LeftProj[A, BB] = {
+                           (implicit aToB: Right.Convert[A] => BB): LeftProj[A, BB] = {
       val e2: Either[A, BB] = e match {
         case Left(a) => if (p(a)) Left(a) else Right(aToB(Right.Convert(a)))
         case Right(b) => Right(b)
@@ -1045,7 +1045,7 @@ object Either {
     }
 
     def withFilter[AA >: A](p: B => Boolean)
-                           (implicit bToA: Left.Convert => AA): RightProj[AA, B] = {
+                           (implicit bToA: Left.Convert[B] => AA): RightProj[AA, B] = {
       val e2: Either[AA, B] = e match {
         case Left(a) => Left(a)
         case Right(b) => if (p(b)) Right(b) else Left(bToA(Left.Convert(b)))
