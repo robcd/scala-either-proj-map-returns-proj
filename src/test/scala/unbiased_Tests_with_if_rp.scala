@@ -23,7 +23,7 @@ import language.implicitConversions
 object unbiased_Tests_with_if_rp extends App {
   def test(s: String)(b: => Unit) { b }
 
-  implicit def f(convert: Left.Convert) = convert.any.toString
+  implicit def f(convert: Left.Convert[Int]) = convert.b.toString
 
   type E = Either[String, Int]
 
@@ -70,6 +70,8 @@ object unbiased_Tests_with_if_rp extends App {
 
     assert(res == 0)
   }
+
+  implicit def g(convert: Left.Convert[(Int, Int)]) = convert.b.toString
 
   test("foreach - Right, def, true") {
     val either: E = Right(1)

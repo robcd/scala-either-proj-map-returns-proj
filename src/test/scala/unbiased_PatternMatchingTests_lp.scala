@@ -215,7 +215,7 @@ object unbiased_PatternMatchingTests_lp extends App {
   }
 
   import language.implicitConversions
-  implicit def f(convert: Right.Convert) = convert.any.toString
+  implicit def f(convert: Right.Convert[Option[Int]]) = convert.a.toString
 
   type E3 = Either[Option[Int], String]
 
@@ -340,6 +340,8 @@ object unbiased_PatternMatchingTests_lp extends App {
   }
 
   type E4 = Either[Either[String, Int], String]
+
+  implicit def g(convert: Right.Convert[Either[String, Int]]) = convert.a.toString
 
   test("foreach, Left(Right), no def") {
     val either: E4 = Left(Right(1))
