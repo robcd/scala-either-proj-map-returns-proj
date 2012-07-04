@@ -16,11 +16,11 @@ So all that is required in order to use `if` or pattern-matching in
 `for` comprehensions involving `Either` (or one of its projections) is
 an implicit conversion such this:
 
-    implicit def f(convert: Left.Convert) = convert.any.toString
+    implicit def f[B](convert: Left.Convert[B]) = convert.b.toString
 
 You would be prompted by the compiler to supply the above if using
 `if` or pattern-matching in a `for` comprehension involving an
-`Either[String, ...]` or `Either.RightProj[String, ...]`, in order
+`Either[String, B]` or `Either.RightProj[String, B]`, in order
 that a `Left` instance may be created, were the `Boolean` expression
 in question to be `false` or the pattern not match.
 
